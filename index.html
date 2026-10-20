@@ -53,16 +53,17 @@ body{background:radial-gradient(ellipse at 100% 0%,#e9f4e9 0%,transparent 40%),#
  <p>Silakan masuk menggunakan akun SIKAP yang telah diberikan oleh pengelola.</p>
  <div class="sikap-online-form" hidden aria-hidden="true" style="display:none!important"><input id="s67url" type="hidden" autocomplete="off"><input id="s67key" type="hidden" autocomplete="off"><button type="button" id="s67connect" tabindex="-1">Hubungkan</button></div>
  <div id="s67loginarea" hidden><div class="sikap-online-form"><label>Email akun<input id="s67email" type="email" autocomplete="username"></label><label>Kata sandi<input id="s67password" type="password" autocomplete="current-password"></label><button type="button" id="s67login">Masuk</button></div></div>
-  <div id="s67firstChange" hidden style="margin-top:16px;padding:16px;border:1px solid #c7ddcc;border-radius:12px;background:#f7fbf8">
-    <h2 style="font-size:19px;margin:0 0 8px">Ganti kata sandi pertama</h2>
-    <p style="font-size:13px">Kata sandi sementara sudah diterima. Demi keamanan, buat kata sandi pribadi sebelum menggunakan SIKAP.</p>
-    <form id="s67firstForm" class="sikap-online-form">
-      <label>Kata sandi baru<input id="s67newPassword" type="password" autocomplete="new-password" minlength="10" required placeholder="Minimal 10 karakter"></label>
-      <label>Ulangi kata sandi baru<input id="s67confirmPassword" type="password" autocomplete="new-password" minlength="10" required></label>
-      <button type="submit" id="s67firstSubmit">Simpan kata sandi baru</button>
-    </form>
-    <p class="notice">Jangan gunakan kata sandi sementara kembali. Jika proses gagal, jangan membuat akun baru.</p>
-  </div>
+  <section id="s67firstChange" hidden style="margin-top:16px;padding:16px;border:1px solid #c7ddcc;border-radius:12px;background:#f7fbf8" aria-label="Penggantian kata sandi pertama">
+   <h2 style="font-size:19px;margin:0 0 8px">Ganti kata sandi pertama</h2>
+   <p style="font-size:13px;line-height:1.6">Login sementara berhasil. Buat kata sandi pribadi untuk melanjutkan. Berlaku bagi Admin KUA dan pegawai.</p>
+   <form id="s67firstForm" class="sikap-online-form">
+    <label>Kata sandi sementara saat ini<input id="s67oldPassword" type="password" required autocomplete="current-password"></label>
+    <label>Kata sandi baru (minimal 12 karakter)<input id="s67newPassword" type="password" minlength="12" maxlength="128" required autocomplete="new-password"></label>
+    <label>Ulangi kata sandi baru<input id="s67confirmPassword" type="password" minlength="12" maxlength="128" required autocomplete="new-password"></label>
+    <button type="submit" id="s67firstSubmit">Ganti kata sandi</button>
+    <button type="button" id="s67firstCancel" style="background:#e6f1e9;color:#165b34">Batalkan dan keluar</button>
+   </form>
+  </section>
  <p class="sikap-online-msg" id="s67msg" role="status" aria-live="polite"></p>
 </div><div id="onlineBar" hidden><span id="s67identity"></span><strong>SIKAP • LCKH Online</strong><button type="button" id="s67reload">Muat Ulang LCKH</button><button type="button" id="s67logout">Keluar</button></div>
 <section id="s96super" class="sikap-online-gate" style="display:none;max-width:1250px;margin:30px auto" aria-label="Dashboard Super Admin">
@@ -211,18 +212,16 @@ s67id('s67login').onclick=()=>s67run(async()=>{
  const uid=data?.user?.id;if(!uid)throw Error('Login tidak menghasilkan user ID.');
  const [p,r]=await Promise.all([s67client.from('sikap_profil').select('user_id,kua_id,nama,nip_id,jabatan,aktif,wajib_ganti_sandi').eq('user_id',uid).maybeSingle(),s67client.from('sikap_peran').select('peran').eq('user_id',uid).maybeSingle()]);
  if(p.error||r.error)throw Error('Gagal memuat profil/peran: '+(p.error||r.error).message);
- if(!p.data?.aktif||!['pegawai','admin_kua','super_admin'].includes(r.data?.peran)){
-   await s67client.auth.signOut();throw Error('Akun belum aktif atau belum memiliki peran SIKAP yang sah. Hubungi Admin KUA.');
+ if(!p.data?.aktif||!p.data?.kua_id||!['pegawai','admin_kua','super_admin'].includes(r.data?.peran)){
+  await s67client.auth.signOut();
+  throw Error('Akun tidak aktif, belum ditempatkan pada KUA, atau peran tidak dapat diverifikasi. Hubungi Admin KUA.');
  }
  if(p.data.wajib_ganti_sandi){
-   s67currentUser=uid;s67profile=p.data;s95role=r.data.peran;
-   s67id('s67loginarea').hidden=true;
-   s67id('s67firstChange').hidden=false;
-   s67msg('Login sementara berhasil. Silakan ganti kata sandi sebelum membuka dashboard.');
-   return;
+  s67currentUser=uid;s67profile=p.data;s95role=r.data.peran;
+  s67id('s67loginarea').hidden=true;s67id('s67firstChange').hidden=false;
+  s67msg('Login sementara diterima untuk '+(p.data.nama||'pengguna')+'. Silakan ganti kata sandi pertama.');
+  return;
  }
- s67id('s67firstChange').hidden=true;
- s67id('s67loginarea').hidden=false;
  s95role=r.data.peran;
  s67currentUser=uid;s67profile=p.data;
  const k=await s67client.from('sikap_kua').select('nama').eq('id',p.data.kua_id).maybeSingle();
@@ -248,44 +247,42 @@ s67id('s67login').onclick=()=>s67run(async()=>{
  await s91loadProfile();
  await s67getRows();
 });
-// Perubahan kata sandi pertama dilayani Edge Function yang telah dideploy.
-// Status wajib_ganti_sandi tidak boleh dilewati hanya dengan mengubah UI.
-s67id('s67firstForm').addEventListener('submit',event=>{
- event.preventDefault();
- s67run(async()=>{
-   const next=s67id('s67newPassword').value;
-   const confirm=s67id('s67confirmPassword').value;
-   if(next.length<10)throw Error('Kata sandi baru minimal 10 karakter.');
-   if(next!==confirm)throw Error('Konfirmasi kata sandi baru tidak sama.');
-   if(!s67client||!s67currentUser)throw Error('Sesi login sementara tidak ditemukan. Silakan login kembali.');
-   const {data:userData,error:userError}=await s67client.auth.getUser();
-   if(userError||userData?.user?.id!==s67currentUser)throw Error('Sesi tidak sesuai. Silakan login kembali.');
-   // Fungsi server wajib memvalidasi JWT, mengubah kata sandi, lalu mencabut flag wajib_ganti_sandi.
-   const {data,error}=await s67client.functions.invoke('sikap-ganti-sandi-pertama',{
-      body:{password_baru:next}
-   });
-   if(error){
-     let msg=error.message||'Permintaan perubahan sandi gagal.';
-     try{const detail=await error.context?.clone?.().json();msg=detail?.message||detail?.error||msg;}catch{}
-     throw Error(msg);
-   }
-   if(data?.error)throw Error(data.error);
-   const {data:profile,error:profileError}=await s67client.from('sikap_profil')
-     .select('wajib_ganti_sandi').eq('user_id',s67currentUser).maybeSingle();
-   if(profileError||!profile||profile.wajib_ganti_sandi!==false){
-     throw Error('Permintaan telah dikirim, tetapi status wajib ganti sandi belum dinonaktifkan oleh server. Hubungi pengelola; jangan membuat akun lagi.');
-   }
-   s67id('s67newPassword').value='';s67id('s67confirmPassword').value='';
-   await s67client.auth.signOut();
-   s67currentUser=null;s67profile=null;s95role=null;
-   s67id('s67firstChange').hidden=true;s67id('s67loginarea').hidden=false;
-   s67msg('Kata sandi berhasil diganti. Silakan masuk kembali memakai kata sandi baru.');
+// Login pertama semua peran: gunakan Edge Function yang telah digunakan pada tahap V4.1.
+// Tidak memberi akses dashboard sampai fungsi server berhasil memperbarui sandi dan status profil.
+async function s67resetFirstChange(){
+ await s67client?.auth.signOut();
+ s67currentUser=null;s67profile=null;s95role=null;
+ s67id('s67firstForm').reset();s67id('s67firstChange').hidden=true;
+ s67id('s67loginarea').hidden=false;
+}
+s67id('s67firstCancel').onclick=()=>s67run(async()=>{await s67resetFirstChange();s67msg('Proses dibatalkan. Silakan login lagi.');});
+s67id('s67firstForm').addEventListener('submit',ev=>{
+ ev.preventDefault();s67run(async()=>{
+  if(!s67client||!s67currentUser)throw Error('Sesi sementara tidak ditemukan. Login ulang.');
+  const oldPass=s67id('s67oldPassword').value;
+  const newPass=s67id('s67newPassword').value;
+  const confirmPass=s67id('s67confirmPassword').value;
+  if(newPass!==confirmPass)throw Error('Konfirmasi kata sandi tidak sama.');
+  if(newPass.length<12||newPass.length>128||newPass===oldPass)throw Error('Gunakan sandi baru berbeda, minimal 12 karakter.');
+  const {data:sessionData,error:sessionError}=await s67client.auth.getUser();
+  if(sessionError||sessionData?.user?.id!==s67currentUser)throw Error('Sesi tidak cocok. Login ulang.');
+  const {data,error}=await s67client.functions.invoke('sikap-ganti-sandi-pertama',{
+   body:{password_lama:oldPass,password_baru:newPass}
+  });
+  if(error){
+   let message=error.message||'Gagal mengganti sandi.';
+   try{const detail=await error.context?.clone?.().json();message=detail?.message||detail?.error||message}catch{}
+   throw Error(message);
+  }
+  // Hanya server yang berwenang menandai wajib_ganti_sandi=false.
+  await s67resetFirstChange();
+  s67msg((data?.message||'Kata sandi berhasil diganti.')+' Login kembali menggunakan kata sandi baru.');
  });
 });
 s67id('s67reload').onclick=()=>s67run(s95role==='super_admin'?s96load:(s95role==='admin_kua'&&!s953personal?s95load:s67getRows));
 s67id('s67logout').onclick=()=>s67run(async()=>{
  await s67client?.auth.signOut();s67currentUser=null;s67profile=null;s95role=null;s953personal=false;db.entries=[];s67id('s95admin').style.display='none';s67id('s96super').style.display='none';s67id('s953backadmin').hidden=true;s67id('footnav').style.display='';db.profile={name:'',nip:'',position:'',rank:'',unit:'',organization:'',supervisorName:'',supervisorNip:'',supervisorPosition:''};
- s67id('onlineBar').hidden=true;s67id('sikapApp').style.display='none';s67id('s67firstChange').hidden=true;s67id('s67loginarea').hidden=false;s67id('onlineGate').hidden=false;s67msg('Sudah keluar. Silakan login ulang.');
+ s67id('s67firstChange').hidden=true;s67id('s67firstForm').reset();s67id('s67loginarea').hidden=false;s67id('onlineBar').hidden=true;s67id('sikapApp').style.display='none';s67id('onlineGate').hidden=false;s67msg('Sudah keluar. Silakan login ulang.');
 });
 // Tahap 7.9: INSERT, UPDATE, dan DELETE terbatas untuk baris simulasi manual.
 // Penyimpanan V3.3 lokal dinonaktifkan agar tidak mencampur data uji online.
