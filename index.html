@@ -79,11 +79,43 @@ body{background:radial-gradient(ellipse at 100% 0%,#e9f4e9 0%,transparent 40%),#
  .signature-area .signature-location-date { line-height:1.3; }
  .report-table thead th { text-align:center!important; vertical-align:middle!important; line-height:1.3; padding:6px 5px!important; }
 }
+</style><style id="sikap-mobile-polish">
+/* Mobile SIKAP: jangan tampilkan navigasi sebelum login / setelah logout. */
+body:has(#onlineGate:not([hidden])) #footnav{display:none!important}
+body:has(#onlineGate:not([hidden])) #sikapApp{display:none!important}
+#onlineBar{position:static!important}
+#sikapApp .sidebar{top:0;height:100vh}
+.sikap-login-heading{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.sikap-login-mark{display:grid;place-items:center;flex:0 0 56px;height:56px;border-radius:17px;background:linear-gradient(145deg,#146747,#2d9669);color:white;font-size:32px;box-shadow:0 10px 24px #174c3622}
+.sikap-login-eyebrow{font-weight:800;letter-spacing:1.15px;font-size:10px;color:#307553}
+#onlineGate .sikap-login-heading h1{font-size:27px;line-height:1.2;margin:5px 0 0;color:#154b37}
+.sikap-login-subtitle{margin:0 0 22px;color:#5a7365}
+#s67loginarea .sikap-online-form{gap:11px}
+#s67loginarea .sikap-online-form label{margin-top:5px;color:#254d3a}
+#s67loginarea #s67email,#s67loginarea #s67password{font-size:16px;min-height:48px;background:#fbfdfb}
+.sikap-password-wrap{position:relative}
+#s67loginarea .sikap-password-wrap #s67password{padding-right:60px;margin-top:0}
+#s67loginarea .sikap-password-toggle{position:absolute;top:50%;right:7px;transform:translateY(-50%);width:43px;height:41px;padding:0;display:grid;place-items:center;border:0;border-radius:9px;background:transparent;color:#38634f;cursor:pointer}
+#s67loginarea .sikap-password-toggle:hover,#s67loginarea .sikap-password-toggle:focus-visible{background:#eaf4ec}
+#s67login{min-height:49px;margin-top:10px;font-size:16px}
+@media(max-width:650px){
+ #onlineGate{margin:20px 12px 35px!important;padding:26px 22px!important;border-radius:22px!important}
+ .sikap-login-heading{align-items:flex-start;gap:12px}
+ .sikap-login-mark{flex-basis:46px;height:46px;border-radius:13px;font-size:27px}
+ #onlineGate .sikap-login-heading h1{font-size:23px}
+ .sikap-login-eyebrow{font-size:9px;letter-spacing:.6px}
+ #onlineBar:not([hidden]){padding:9px 12px!important;gap:8px;justify-content:space-between;background:#f5faf6;border-color:#d7e8db}
+ #onlineBar #s67identity{display:none!important}
+ #onlineBar strong{font-size:12px;color:#155d42}
+ #onlineBar button{font-size:12px;padding:8px 9px;white-space:nowrap}
+ #sikapApp .main{padding-top:14px}
+}
+@media print{#footnav,#onlineBar,#onlineGate{display:none!important}}
 </style></head><body><div id="onlineGate" class="sikap-online-gate">
- <h1>SIKAP — Sistem Informasi Kegiatan dan Pelaporan</h1>
- <p>Silakan masuk menggunakan akun SIKAP yang telah diberikan oleh pengelola.</p>
+ <div class="sikap-login-heading"><div class="sikap-login-mark" aria-hidden="true">✦</div><div><span class="sikap-login-eyebrow">PORTAL KEGIATAN &amp; PELAPORAN KUA</span><h1>Selamat Datang di SIKAP</h1></div></div>
+ <p class="sikap-login-subtitle">Sistem Informasi Kegiatan dan Pelaporan. Masuk menggunakan akun yang diberikan oleh pengelola KUA.</p>
  <div class="sikap-online-form" hidden aria-hidden="true" style="display:none!important"><input id="s67url" type="hidden" autocomplete="off"><input id="s67key" type="hidden" autocomplete="off"><button type="button" id="s67connect" tabindex="-1">Hubungkan</button></div>
- <div id="s67loginarea" hidden><div class="sikap-online-form"><label>Email akun<input id="s67email" type="email" autocomplete="username"></label><label>Kata sandi<input id="s67password" type="password" autocomplete="current-password"></label><button type="button" id="s67login">Masuk</button></div></div>
+ <div id="s67loginarea" hidden><div class="sikap-online-form"><label>Email akun<input id="s67email" type="email" autocomplete="username"></label><label for="s67password">Kata sandi</label><div class="sikap-password-wrap"><input id="s67password" type="password" autocomplete="current-password" aria-label="Kata sandi"><button id="s67togglePassword" class="sikap-password-toggle" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false" title="Tampilkan kata sandi"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div><button type="button" id="s67login">Masuk</button></div></div>
   <section id="s67firstChange" hidden style="margin-top:16px;padding:16px;border:1px solid #c7ddcc;border-radius:12px;background:#f7fbf8" aria-label="Penggantian kata sandi pertama">
    <h2 style="font-size:19px;margin:0 0 8px">Ganti kata sandi pertama</h2>
    <p style="font-size:13px;line-height:1.6">Login sementara berhasil. Buat kata sandi pribadi untuk melanjutkan. Berlaku bagi Admin KUA dan pegawai.</p>
@@ -832,5 +864,18 @@ $('mgForm').addEventListener('submit',async e=>{
 });
 // Only controls visibility. Permissions and authorization are enforced by the Supabase server.
 setInterval(refreshRole,900);refreshRole();
+})();
+</script><script id="sikap-password-visibility">
+(function(){
+ const button=document.getElementById('s67togglePassword');
+ const password=document.getElementById('s67password');
+ if(!button||!password)return;
+ button.addEventListener('click',function(){
+  const visible=password.type==='password';
+  password.type=visible?'text':'password';
+  button.setAttribute('aria-pressed',String(visible));
+  button.setAttribute('aria-label',visible?'Sembunyikan kata sandi':'Tampilkan kata sandi');
+  button.title=visible?'Sembunyikan kata sandi':'Tampilkan kata sandi';
+ });
 })();
 </script></body></html>
