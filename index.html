@@ -211,10 +211,28 @@ s67id('s67login').onclick=()=>s67run(async()=>{
  if(error)throw Error('Login gagal: '+error.message);
  const uid=data?.user?.id;if(!uid)throw Error('Login tidak menghasilkan user ID.');
  const [p,r]=await Promise.all([s67client.from('sikap_profil').select('user_id,kua_id,nama,nip_id,jabatan,aktif,wajib_ganti_sandi').eq('user_id',uid).maybeSingle(),s67client.from('sikap_peran').select('peran').eq('user_id',uid).maybeSingle()]);
- if(p.error||r.error)throw Error('Gagal memuat profil/peran: '+(p.error||r.error).message);
- if(!p.data?.aktif||!p.data?.kua_id||!['pegawai','admin_kua','super_admin'].includes(r.data?.peran)){
+ // Bedakan akun yang benar-benar tidak aktif dari profil/peran yang tersembunyi RLS.
+ // Edge Function pada tahap penggantian sandi tetap menjadi otoritas akhir;
+ // fallback ini TIDAK pernah memberikan akses dashboard.
+ if(p.data && p.data.aktif===false){
   await s67client.auth.signOut();
-  throw Error('Akun tidak aktif, belum ditempatkan pada KUA, atau peran tidak dapat diverifikasi. Hubungi Admin KUA.');
+  throw Error('Akun dinonaktifkan. Hubungi Admin KUA.');
+ }
+ if(p.data && !p.data.kua_id){
+  await s67client.auth.signOut();
+  throw Error('Akun belum memiliki penempatan KUA. Hubungi Admin KUA.');
+ }
+ if(r.data && !['pegawai','admin_kua','super_admin'].includes(r.data.peran)){
+  await s67client.auth.signOut();
+  throw Error('Peran akun tidak sah. Hubungi Admin KUA.');
+ }
+ if(p.error||r.error||!p.data||!r.data){
+  // Auth sudah memvalidasi sandi. Saat SELECT profil/peran dibatasi RLS,
+  // tawarkan hanya proses sandi pertama; server tetap menentukan validitas akun.
+  s67currentUser=uid;s67profile=p.data||null;s95role=r.data?.peran||null;
+  s67id('s67loginarea').hidden=true;s67id('s67firstChange').hidden=false;
+  s67msg('Kata sandi diterima. Pembacaan profil/peran belum lengkap (kemungkinan aturan akses database). Silakan jalankan penggantian kata sandi pertama. Jika ditolak server, hubungi pengelola; jangan membuat akun baru.');
+  return;
  }
  if(p.data.wajib_ganti_sandi){
   s67currentUser=uid;s67profile=p.data;s95role=r.data.peran;
