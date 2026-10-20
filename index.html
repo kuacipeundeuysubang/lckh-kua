@@ -657,6 +657,29 @@ s67id('s67connect').click();
 #sikapManageAccounts button{margin-top:12px;border:0;border-radius:9px;padding:12px 17px;background:#145c48;color:white;font-weight:700}
 #sikapManageAccounts .mg-note{font-size:13px;color:#465c51}
 #sikapManageAccounts #mgStatus{white-space:pre-line}
+
+/* SIKAP: hanya dokumen LCKH/RKB/LCKB/WFO yang boleh masuk hasil cetak.
+   Seluruh dashboard, autentikasi, dan manajemen akun adalah tampilan layar saja. */
+@media print {
+  #onlineGate, #onlineBar, #s96super, #s95admin,
+  #sikapManageAccounts, #toast, #footnav {
+    display: none !important;
+  }
+  /* Jangan paksa kontainer LCKH tampil bila pengguna sedang di dashboard admin. */
+  #sikapApp { display: none !important; }
+  #sikapApp:has(#content .printheader) { display: flex !important; }
+  #sikapApp:has(#content .printheader) .sidebar,
+  #sikapApp:has(#content .printheader) .top,
+  #sikapApp:has(#content .printheader) #s953personalnav {
+    display: none !important;
+  }
+  #sikapApp:has(#content .printheader) .main {
+    display: block !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
 </style>
 <section id="sikapManageAccounts" aria-label="Tambah akun pengguna">
  <h2 id="mgTitle">Kelola akun</h2><p class="mg-note">Akun dibuat hanya oleh pengelola yang berwenang. Sandi sementara, bila diberikan server, hanya ditampilkan sekali. Simpan secara aman. Tidak ada pendaftaran umum.</p>
