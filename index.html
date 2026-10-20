@@ -71,26 +71,10 @@ body{background:radial-gradient(ellipse at 100% 0%,#e9f4e9 0%,transparent 40%),#
  <p class="info" style="margin:16px 0">Akun Admin KUA dibuat melalui fungsi server oleh Super Admin. Semua perubahan hak akses harus diverifikasi oleh server dan kebijakan database.</p>
  <p id="s96status" class="notice" role="status">Belum dimuat.</p>
  <div class="grid" style="margin:15px 0;grid-template-columns:repeat(3,minmax(0,1fr))"><div class="stat"><small>Pengguna terdaftar</small><strong id="s96total">—</strong></div><div class="stat"><small>KUA tersedia</small><strong id="s96kua">—</strong></div><div class="stat"><small>Admin KUA</small><strong id="s96admincount">—</strong></div></div>
- <section class="panel"><div class="section-head"><h2>Daftar Pengguna dan Admin KUA</h2></div><input class="search" id="s96filter" placeholder="Cari nama, NIP/ID, jabatan, KUA atau peran" aria-label="Cari pengguna"><div class="tablewrap" style="margin-top:14px"><table><thead><tr><th>Nama</th><th>NIP/ID</th><th>Jabatan kedinasan</th><th>KUA</th><th>Peran sistem</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="s96body"><tr><td colspan="7" class="empty">Belum ada data.</td></tr></tbody></table></div></section>
- <section class="panel" id="s97panel" hidden><div class="section-head"><h2>Manajemen Profil Pengguna</h2><span class="pill">Super Admin saja</span></div>
-<p class="info">Pilih <b>akun simulasi</b> untuk mengaktifkan/nonaktifkan atau memindahkan KUA. Perubahan tersimpan di Supabase melalui RPC <code>sikap_kelola_pegawai</code>. Tidak membuat akun login (Auth), tidak mengganti jabatan, peran, ataupun LCKH. <b>Jangan gunakan pada pegawai operasional.</b></p>
-<div class="formgrid" style="margin-top:15px"><div class="field"><label for="s97user">Akun simulasi</label><select id="s97user"><option value="">Pilih akun simulasi</option></select></div><div class="field"><label for="s97action">Jenis perubahan</label><select id="s97action"><option value="">Pilih tindakan</option><option value="activate">Aktifkan</option><option value="deactivate">Nonaktifkan</option><option value="move">Pindahkan KUA</option></select></div><div class="field full"><label for="s97kua">KUA tujuan (khusus pindah KUA)</label><select id="s97kua" disabled><option value="">Pilih KUA tujuan</option></select></div></div>
-<div class="actions" style="margin-top:12px"><button type="button" class="btn" id="s97submit">Konfirmasi Perubahan Akun Simulasi</button></div><p class="notice" id="s97status" role="status">Belum ada tindakan.</p></section>
-<section class="panel" id="s98panel" hidden>
- <div class="section-head"><h2>Manajemen KUA</h2><span class="pill">Super Admin</span></div>
- <p class="info"><strong>Mode uji aman:</strong> hanya nama KUA dengan awalan <code>KUA UJI SIKAP 9.8</code> yang boleh dibuat, diperbarui, atau dihapus. KUA operasional tidak dapat diubah dari modul ini. Tindakan dilakukan melalui RPC dengan pemeriksaan peran di database.</p>
- <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin:14px 0"><div class="stat"><small>Daftar KUA</small><strong id="s98count">—</strong></div><div class="stat"><small>KUA Uji 9.8</small><strong id="s98testcount">—</strong></div></div>
- <div class="formgrid">
-  <div class="field"><label for="s98action">Tindakan</label><select id="s98action"><option value="">Pilih tindakan</option><option value="create">Buat KUA Uji</option><option value="rename">Ubah nama KUA Uji</option><option value="delete_test">Hapus KUA Uji kosong</option></select></div>
-  <div class="field"><label for="s98target">KUA uji terdaftar</label><select id="s98target"><option value="">Pilih KUA uji</option></select></div>
-  <div class="field full"><label for="s98name">Nama KUA baru (wajib untuk Buat / Ubah)</label><input id="s98name" maxlength="120" placeholder="KUA UJI SIKAP 9.8 - Simulasi A" autocomplete="off"></div>
-  <div class="full actions"><button type="button" class="btn" id="s98submit">Konfirmasi Tindakan KUA Uji</button><button type="button" class="btn ghost" id="s98refresh">Muat Ulang Daftar KUA</button></div>
- </div>
- <p id="s98status" class="notice" role="status">Belum dimuat.</p>
- <div class="tablewrap"><table><thead><tr><th>Nama KUA</th><th>Jumlah profil</th><th>Kategori</th></tr></thead><tbody id="s98body"><tr><td colspan="3" class="empty">Memuat data…</td></tr></tbody></table></div>
-</section>
-
-<p class="notice">Tambah Admin KUA melalui formulir pengelolaan akun. Setiap tindakan memerlukan otorisasi server.</p>
+ <div class="actions" style="margin:18px 0"><button type="button" class="btn alt" onclick="document.getElementById('s96userspanel').scrollIntoView({behavior:'smooth'})">♧ Manajemen Pengguna</button><button type="button" class="btn alt" onclick="document.getElementById('s98panel').scrollIntoView({behavior:'smooth'})">▣ Manajemen KUA</button><button type="button" class="btn alt" onclick="document.getElementById('s97panel').scrollIntoView({behavior:'smooth'})">⚙ Kelola Pegawai</button></div>
+ <section class="panel" id="s96userspanel"><div class="section-head"><h2>Pengguna Berdasarkan KUA</h2><span class="pill">Daftar KUA</span></div><input class="search" id="s96filter" placeholder="Cari nama, NIP, jabatan, KUA, atau peran" aria-label="Cari pengguna"><div id="s96groups" style="margin-top:14px"></div><div hidden><table><tbody id="s96body"></tbody></table></div></section>
+ <section class="panel" id="s97panel"><div class="section-head"><h2>Kelola Pegawai dan Penempatan</h2><span class="pill">Super Admin</span></div><p class="info">Kelola status aktif dan penempatan pengguna melalui pemeriksaan izin di database. Perubahan tidak menghapus LCKH. Super Admin tidak dapat mengubah akunnya sendiri melalui formulir ini.</p><div class="formgrid" style="margin-top:15px"><div class="field"><label for="s97user">Pilih pengguna</label><select id="s97user"><option value="">Pilih pengguna</option></select></div><div class="field"><label for="s97action">Tindakan</label><select id="s97action"><option value="">Pilih tindakan</option><option value="activate">Aktifkan</option><option value="deactivate">Nonaktifkan</option><option value="move">Pindahkan KUA</option></select></div><div class="field full"><label for="s97kua">KUA tujuan</label><select id="s97kua" disabled><option value="">Pilih KUA tujuan</option></select></div></div><div class="actions" style="margin-top:12px"><button type="button" class="btn" id="s97submit">Simpan Perubahan Pengguna</button></div><p class="notice" id="s97status" role="status">Pilih pengguna dan tindakan.</p></section>
+ <section class="panel" id="s98panel"><div class="section-head"><h2>Manajemen KUA</h2><span class="pill">Super Admin</span></div><p class="info">Tambah unit KUA, ubah nama, atau aktifkan/nonaktifkan KUA. Setiap tindakan diverifikasi oleh fungsi database khusus Super Admin. Data dan laporan pegawai tidak dihapus.</p><div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin:14px 0"><div class="stat"><small>Daftar KUA</small><strong id="s98count">—</strong></div><div class="stat"><small>KUA aktif</small><strong id="s98testcount">—</strong></div></div><div class="formgrid"><div class="field"><label for="s98action">Tindakan</label><select id="s98action"><option value="">Pilih tindakan</option><option value="create">Tambah KUA</option><option value="rename">Ubah Nama KUA</option><option value="activate">Aktifkan KUA</option><option value="deactivate">Nonaktifkan KUA</option></select></div><div class="field"><label for="s98target">Pilih KUA</label><select id="s98target"><option value="">Pilih KUA</option></select></div><div class="field full"><label for="s98name">Nama KUA (untuk tambah/ubah nama)</label><input id="s98name" maxlength="120" placeholder="KUA Kecamatan ..." autocomplete="off"></div><div class="full actions"><button type="button" class="btn" id="s98submit">Simpan Perubahan KUA</button><button type="button" class="btn ghost" id="s98refresh">Muat Ulang Daftar KUA</button></div></div><p id="s98status" class="notice" role="status">Belum dimuat.</p><div class="tablewrap"><table><thead><tr><th>Nama KUA</th><th>Jumlah pengguna</th><th>Status</th></tr></thead><tbody id="s98body"></tbody></table></div></section><p class="notice">Tambah Admin KUA melalui formulir pengelolaan akun. Setiap tindakan memerlukan otorisasi server.</p>
 </section>
 <section id="s95admin" class="sikap-online-gate" style="display:none;max-width:1120px;margin:30px auto" aria-label="Dashboard Admin KUA">
  <div class="section-head"><div><span class="pill">SIKAP • Administrasi KUA</span><h1 style="margin:12px 0 5px">Dashboard Admin KUA</h1><p id="s95who" class="muted" style="margin:0"></p></div><button class="btn ghost" id="s95refresh" type="button">↻ Muat Ulang</button></div>
@@ -572,144 +556,93 @@ async function s953detail(userId){
 }
 
 
-// Tahap 9.6.11 — Dasbor Super Admin; seluruh data dibaca melalui RLS Supabase.
-// Perubahan peran hanya lewat RPC SECURITY DEFINER dengan pemeriksaan auth.uid() di server.
-let s96users=[],s96roles=new Map(),s96busy=false;
+// Dashboard Super Admin operasional; seluruh baca/tulis dibatasi RLS/RPC di server.
+let s96users=[],s96roles=new Map(),s96kuas=[],s96busy=false;
+function s96groupRender(){
+ const q=s67id('s96filter').value.trim().toLocaleLowerCase('id-ID');
+ const matches=p=>[p.nama,p.nip_id,p.jabatan,s96kuas.find(k=>k.id===p.kua_id)?.nama,s96roles.get(p.user_id)].join(' ').toLocaleLowerCase('id-ID').includes(q);
+ const users=s96users.filter(matches);
+ const parts=[...s96kuas.map(k=>({key:k.id,name:k.nama,users:users.filter(p=>p.kua_id===k.id&&s96roles.get(p.user_id)!=='super_admin')})),{key:'system',name:'Administrasi Sistem / Tanpa Penempatan',users:users.filter(p=>!p.kua_id||s96roles.get(p.user_id)==='super_admin')}];
+ const seen=new Set();const groups=parts.map(g=>({...g,users:g.users.filter(p=>{if(seen.has(p.user_id))return false;seen.add(p.user_id);return true;})})).filter(g=>g.users.length||!q&&g.key!=='system');
+ s67id('s96groups').innerHTML=groups.map(g=>`<details class="panel" style="padding:14px;margin:9px 0" ${q||g.users.length?'open':''}><summary style="cursor:pointer;font-weight:750;color:#145d42">▣ ${h(g.name)} <span class="pill">${g.users.length} pengguna</span></summary><div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Nama</th><th>NIP/ID</th><th>Jabatan</th><th>Peran</th><th>Status</th><th>Tindakan</th></tr></thead><tbody>${g.users.length?g.users.map(p=>{const role=s96roles.get(p.user_id),self=p.user_id===s67currentUser;const can=role!=='super_admin'&&!self&&p.aktif&&p.kua_id&&!p.wajib_ganti_sandi;return `<tr><td>${h(p.nama)}</td><td>${h(p.nip_id)}</td><td>${h(p.jabatan||'-')}</td><td>${h(role||'-')}</td><td>${p.aktif?'Aktif':'Nonaktif'}${p.wajib_ganti_sandi?' · Sandi pertama':''}</td><td>${can?`<button class="tinybtn" data-s96uid="${h(p.user_id)}" data-s96to="${role==='pegawai'?'admin_kua':'pegawai'}">${role==='pegawai'?'Tetapkan Admin KUA':'Jadikan Pegawai'}</button>`:'—'}</td></tr>`}).join(''):'<tr><td colspan="6">Belum ada pengguna.</td></tr>'}</tbody></table></div></details>`).join('')||'<p class="muted">Tidak ada pengguna yang cocok.</p>';
+}
 async function s96load(){
- if(s96busy)return;
- if(s95role!=='super_admin'||!s67currentUser||!s67client)throw Error('Akses Super Admin diperlukan.');
+ if(s96busy)return;if(s95role!=='super_admin'||!s67client||!s67currentUser)throw Error('Akses Super Admin diperlukan.');
  s96busy=true;const status=s67id('s96status');s67id('s96refresh').disabled=true;
- status.textContent='Memeriksa sesi dan memuat data…';s67id('s96body').innerHTML='<tr><td colspan="7" class="empty">Memuat…</td></tr>';
  try{
-  const {data:auth,error:authErr}=await s67client.auth.getUser();
-  if(authErr||auth?.user?.id!==s67currentUser)throw Error('Sesi tidak sesuai. Login ulang.');
-  const [pr,rr,kr]=await Promise.all([
-   s67client.from('sikap_profil').select('user_id,kua_id,nama,nip_id,jabatan,aktif,wajib_ganti_sandi').order('nama').limit(1001),
-   s67client.from('sikap_peran').select('user_id,peran').limit(1001),
-   s67client.from('sikap_kua').select('id,nama').limit(1001)
-  ]);
-  if(pr.error||rr.error||kr.error)throw Error('Gagal membaca data sesuai RLS: '+(pr.error||rr.error||kr.error).message);
-  if(pr.data.length>1000||rr.data.length>1000||kr.data.length>1000)throw Error('Jumlah data melewati 1.000 baris. Pagination diperlukan; tampilan tidak boleh menampilkan hasil parsial.');
-  const roleMap=new Map(rr.data.map(x=>[x.user_id,x.peran]));
-  const kuaMap=new Map(kr.data.map(x=>[x.id,x.nama]));
-  if(pr.data.some(p=>!roleMap.has(p.user_id)))throw Error('Tidak semua peran dapat dibaca; data tidak ditampilkan.');
-  s96users=pr.data;s96roles=roleMap;
-  const q=s67id('s96filter').value.trim().toLocaleLowerCase('id-ID');
-  const visible=s96users.filter(p=>[p.nama,p.nip_id,p.jabatan,kuaMap.get(p.kua_id),roleMap.get(p.user_id)].join(' ').toLocaleLowerCase('id-ID').includes(q));
-  s67id('s96total').textContent=String(pr.data.length);
-  s67id('s96kua').textContent=String(kr.data.length);
-  s67id('s96admincount').textContent=String(pr.data.filter(p=>roleMap.get(p.user_id)==='admin_kua').length);
-  s67id('s96body').innerHTML=visible.length?visible.map(p=>{
-   const role=roleMap.get(p.user_id),isSelf=p.user_id===s67currentUser;
-   const validTarget=p.aktif&&p.kua_id&&!p.wajib_ganti_sandi&&!isSelf&&(role==='pegawai'||role==='admin_kua');
-   const action=validTarget?`<button class="tinybtn" data-s96uid="${h(p.user_id)}" data-s96to="${role==='pegawai'?'admin_kua':'pegawai'}">${role==='pegawai'?'Tetapkan Admin KUA':'Jadikan Pegawai'}</button>`:'<span class="muted mini">Tidak tersedia</span>';
-   return `<tr><td>${h(p.nama)}</td><td>${h(p.nip_id)}</td><td>${h(p.jabatan||'-')}</td><td>${h(kuaMap.get(p.kua_id)||'Belum ada penempatan')}</td><td>${h(role)}</td><td>${p.aktif?'Aktif':'Tidak aktif'}${p.wajib_ganti_sandi?' · wajib ganti sandi':''}</td><td>${action}</td></tr>`;
-  }).join(''):'<tr><td colspan="7" class="empty">Tidak ada pengguna sesuai pencarian.</td></tr>';
-  status.textContent=`${pr.data.length} profil · ${kr.data.length} KUA · ${visible.length} ditampilkan. Perubahan peran harus dikonfirmasi dan diverifikasi ulang.`;
- }catch(e){s96users=[];s96roles.clear();s67id('s96body').innerHTML='<tr><td colspan="7" class="empty">Data belum dapat ditampilkan.</td></tr>';status.textContent='GAGAL: '+(e?.message||String(e));throw e;}
- finally{s96busy=false;s67id('s96refresh').disabled=false;}
+  const auth=await s67client.auth.getUser();if(auth.error||auth.data?.user?.id!==s67currentUser)throw Error('Sesi tidak valid. Login ulang.');
+  const [pr,rr,kr]=await Promise.all([s67client.from('sikap_profil').select('user_id,kua_id,nama,nip_id,jabatan,aktif,wajib_ganti_sandi').order('nama').limit(1001),s67client.from('sikap_peran').select('user_id,peran').limit(1001),s67client.from('sikap_kua').select('id,nama,aktif').order('nama').limit(1001)]);
+  if(pr.error||rr.error||kr.error)throw Error('Gagal membaca data: '+(pr.error||rr.error||kr.error).message);
+  if([pr,rr,kr].some(r=>r.data.length>1000))throw Error('Data melewati 1.000 baris; perlu pagination.');
+  const roles=new Map(rr.data.map(x=>[x.user_id,x.peran]));if(pr.data.some(p=>!roles.has(p.user_id)))throw Error('Sebagian peran tidak dapat dibaca.');
+  s96users=pr.data;s96roles=roles;s96kuas=kr.data;
+  s67id('s96total').textContent=String(pr.data.length);s67id('s96kua').textContent=String(kr.data.length);s67id('s96admincount').textContent=String(pr.data.filter(p=>roles.get(p.user_id)==='admin_kua').length);
+  s96groupRender();s97render();s98load();status.textContent=`${pr.data.length} pengguna di ${kr.data.length} KUA. Data mengikuti kewenangan Super Admin.`;
+ }catch(e){status.textContent='GAGAL: '+e.message;throw e}finally{s96busy=false;s67id('s96refresh').disabled=false;}
 }
 async function s96change(userId,targetRole){
- if(s95role!=='super_admin'||!s67client||s96busy)throw Error('Mode Super Admin tidak tersedia.');
- const profile=s96users.find(p=>p.user_id===userId),old=s96roles.get(userId);
- if(!profile||!profile.aktif||!profile.kua_id||profile.wajib_ganti_sandi||userId===s67currentUser||!['pegawai','admin_kua'].includes(old)||targetRole!==(old==='pegawai'?'admin_kua':'pegawai'))throw Error('Pengguna atau perubahan peran tidak memenuhi syarat.');
- const label=targetRole==='admin_kua'?'ADMIN KUA':'PEGAWAI';
- if(!confirm(`UJI perubahan peran akun berikut melalui RPC Supabase:\n\n${profile.nama} (${profile.nip_id})\n${old} → ${targetRole}\n\nJabatan kedinasan dan riwayat LCKH tidak diubah. Lanjutkan?`))return;
- const phrase=prompt(`Ketik TETAPKAN untuk mengonfirmasi perubahan ${label} pada akun ${profile.nama}:`);
- if(phrase!=='TETAPKAN'){if(phrase!==null)alert('Konfirmasi tidak sesuai. Tidak ada perubahan.');return;}
- const session=await s67client.auth.getUser();if(session.error||session.data?.user?.id!==s67currentUser)throw Error('Sesi telah berubah. Silakan login ulang.');
- const {data,error}=await s67client.rpc('sikap_tetapkan_admin_kua',{target_user:userId,peran_baru:targetRole});
- if(error)throw Error('RPC menolak perubahan: '+error.message);
- await s96load();
- if(s96roles.get(userId)!==targetRole)throw Error('RPC merespons, tetapi hasil pembacaan ulang tidak sesuai. Periksa Supabase sebelum mencoba lagi.');
- alert('Perubahan terverifikasi: '+String(data||label));
+ if(s95role!=='super_admin'||s96busy)throw Error('Akses Super Admin diperlukan.');
+ const p=s96users.find(x=>x.user_id===userId),role=s96roles.get(userId);
+ if(!p||p.user_id===s67currentUser||!p.aktif||!p.kua_id||p.wajib_ganti_sandi||!['pegawai','admin_kua'].includes(role)||targetRole===(role))throw Error('Pengguna belum memenuhi syarat perubahan peran.');
+ if(!confirm(`Ubah peran ${p.nama} (${p.nip_id}) dari ${role} menjadi ${targetRole}?`))return;
+ if(prompt('Ketik TETAPKAN untuk mengonfirmasi:')!=='TETAPKAN')return;
+ const {error}=await s67client.rpc('sikap_tetapkan_admin_kua',{target_user:userId,peran_baru:targetRole});if(error)throw Error(error.message);
+ await s96load();if(s96roles.get(userId)!==targetRole)throw Error('Perubahan belum terverifikasi. Jangan kirim ulang sebelum memeriksa data.');
+ alert('Peran pengguna berhasil diperbarui.');
 }
 s67id('s96refresh').onclick=()=>s67run(s96load);
-s67id('s96filter').oninput=()=>{if(s95role==='super_admin'&&s96users.length)s67run(s96load)};
-s67id('s96body').addEventListener('click',e=>{const b=e.target.closest('button[data-s96uid]');if(b)s67run(()=>s96change(b.dataset.s96uid,b.dataset.s96to));});
-
-// Tahap 9.7 • Pengelolaan profil terdaftar; RPC menegakkan izin di sisi server.
-let s97kuas=[];
-async function s97render(){
- if(s95role!=='super_admin')return;
- const {data,error}=await s67client.from('sikap_kua').select('id,nama').order('nama').limit(1001);
- if(error||!data||data.length>1000){s67id('s97status').textContent='Gagal membaca daftar KUA. Periksa izin RLS.';return;}
- s97kuas=data;
- const profiles=s96users.filter(p=>/^TEST-/.test(p.nip_id||'') && p.user_id!==s67currentUser && ['pegawai','admin_kua'].includes(s96roles.get(p.user_id)));
- s67id('s97user').innerHTML='<option value="">Pilih akun simulasi</option>'+profiles.map(p=>`<option value="${h(p.user_id)}">${h(p.nama)} (${h(p.nip_id)}) — ${p.aktif?'aktif':'nonaktif'}</option>`).join('');
- s67id('s97kua').innerHTML='<option value="">Pilih KUA tujuan</option>'+data.map(k=>`<option value="${h(k.id)}">${h(k.nama)}</option>`).join('');
+s67id('s96filter').oninput=s96groupRender;
+s67id('s96groups').addEventListener('click',e=>{const b=e.target.closest('button[data-s96uid]');if(b)s67run(()=>s96change(b.dataset.s96uid,b.dataset.s96to));});
+function s97render(){
+ const profiles=s96users.filter(p=>p.user_id!==s67currentUser&&['pegawai','admin_kua'].includes(s96roles.get(p.user_id)));
+ s67id('s97user').innerHTML='<option value="">Pilih pengguna</option>'+profiles.map(p=>`<option value="${h(p.user_id)}">${h(s96kuas.find(k=>k.id===p.kua_id)?.nama||'Tanpa KUA')} — ${h(p.nama)} (${h(p.nip_id)})</option>`).join('');
+ s67id('s97kua').innerHTML='<option value="">Pilih KUA tujuan</option>'+s96kuas.filter(k=>k.aktif).map(k=>`<option value="${h(k.id)}">${h(k.nama)}</option>`).join('');
 }
-s67id('s97action').onchange=()=>{s67id('s97kua').disabled=s67id('s97action').value!=='move';};
+s67id('s97action').onchange=()=>{s67id('s97kua').disabled=s67id('s97action').value!=='move'};
 s67id('s97submit').onclick=()=>s67run(async()=>{
- if(s95role!=='super_admin'||s96busy)throw Error('Akses Super Admin tidak tersedia.');
- const uid=s67id('s97user').value,action=s67id('s97action').value,kua=s67id('s97kua').value;
- const p=s96users.find(x=>x.user_id===uid);
- if(!p||!/^TEST-/.test(p.nip_id||'')||p.user_id===s67currentUser||!['pegawai','admin_kua'].includes(s96roles.get(uid)))throw Error('Pilih akun simulasi yang sah.');
- if(!['activate','deactivate','move'].includes(action))throw Error('Pilih jenis tindakan.');
- if(action==='move'&&(!kua||!s97kuas.some(k=>k.id===kua)||kua===p.kua_id))throw Error('Pilih KUA tujuan yang berbeda.');
- const detail=action==='activate'?'Aktifkan akun':action==='deactivate'?'Nonaktifkan akun':'Pindahkan akun ke '+s97kuas.find(k=>k.id===kua).nama;
- if(!confirm(`PERUBAHAN NYATA DATABASE (MODE UJI)\n\n${p.nama} (${p.nip_id})\n${detail}\n\nLanjutkan?`))return;
- if(prompt('Ketik SETUJU untuk menyimpan perubahan:')!=='SETUJU')return;
- const {data:auth,error:ae}=await s67client.auth.getUser();if(ae||auth?.user?.id!==s67currentUser)throw Error('Sesi Super Admin tidak valid.');
+ if(s95role!=='super_admin'||s96busy)throw Error('Akses Super Admin diperlukan.');
+ const uid=s67id('s97user').value,action=s67id('s97action').value,kua=s67id('s97kua').value,p=s96users.find(x=>x.user_id===uid);
+ if(!p||p.user_id===s67currentUser||!['pegawai','admin_kua'].includes(s96roles.get(uid)))throw Error('Pilih pengguna yang sah.');
+ if(!['activate','deactivate','move'].includes(action))throw Error('Pilih tindakan.');
+ if(action==='move'&&(!kua||!s96kuas.some(k=>k.id===kua&&k.aktif)||kua===p.kua_id))throw Error('Pilih KUA tujuan yang berbeda dan aktif.');
+ if((action==='activate'&&p.aktif)||(action==='deactivate'&&!p.aktif))throw Error('Status pengguna sudah sesuai.');
+ const detail=action==='move'?'Pindahkan ke '+s96kuas.find(k=>k.id===kua).nama:action==='activate'?'Aktifkan':'Nonaktifkan';
+ if(!confirm(`Konfirmasi ${detail} untuk ${p.nama}? Perubahan ini memengaruhi akses akun operasional.`))return;
+ if(prompt('Ketik SETUJU untuk menyimpan:')!=='SETUJU')return;
  const args={target_user:uid,status_aktif:action==='activate'?true:action==='deactivate'?false:null,penempatan_kua:action==='move'?kua:null};
- s67id('s97status').textContent='Mengirim ke RPC…';
- const {data,error}=await s67client.rpc('sikap_kelola_pegawai',args);if(error)throw Error('RPC menolak perubahan: '+error.message);
- await s96load(); const verify=s96users.find(x=>x.user_id===uid);
- if(!verify||(action==='activate'&&!verify.aktif)||(action==='deactivate'&&verify.aktif)||(action==='move'&&verify.kua_id!==kua))throw Error('Respons RPC diterima tetapi verifikasi ulang tidak cocok. Jangan ulangi sebelum diperiksa.');
- await s97render(); s67id('s97status').textContent='TERVERIFIKASI: '+String(data);
+ const {error}=await s67client.rpc('sikap_kelola_pegawai',args);if(error)throw Error('Server menolak tindakan: '+error.message);
+ await s96load();const verify=s96users.find(x=>x.user_id===uid);
+ if(!verify||(action==='activate'&&!verify.aktif)||(action==='deactivate'&&verify.aktif)||(action==='move'&&verify.kua_id!==kua))throw Error('Verifikasi ulang tidak sesuai. Jangan coba berulang sebelum diperiksa.');
+ s67id('s97status').textContent='Berhasil: '+detail+' — '+p.nama;
 });
-const s97originalLoad=s96load;
-s96load=async function(){await s97originalLoad();await s97render()};
-
-
-// Tahap 9.8: manajemen KUA dengan whitelist data pengujian di RPC.
-let s98kuas=[],s98busy=false;
-const s98prefix='KUA UJI SIKAP 9.8';
-async function s98load(){
- if(s95role!=='super_admin'||!s67client)return;
- const status=s67id('s98status');status.textContent='Memuat daftar KUA…';
- const {data,error}=await s67client.from('sikap_kua').select('id,nama').order('nama').limit(1001);
- if(error||!data||data.length>1000){status.textContent='Gagal membaca KUA: '+(error?.message||'perlu pagination');return;}
- s98kuas=data;
- const tests=data.filter(k=>String(k.nama||'').startsWith(s98prefix));
- s67id('s98count').textContent=String(data.length);
- s67id('s98testcount').textContent=String(tests.length);
- s67id('s98target').innerHTML='<option value="">Pilih KUA uji</option>'+tests.map(k=>`<option value="${h(k.id)}">${h(k.nama)}</option>`).join('');
- s67id('s98body').innerHTML=data.map(k=>`<tr><td>${h(k.nama)}</td><td>${s96users.filter(p=>p.kua_id===k.id).length}</td><td>${String(k.nama).startsWith(s98prefix)?'Simulasi 9.8':'KUA terdaftar (terlindungi)'}</td></tr>`).join('')||'<tr><td colspan="3">Belum ada KUA</td></tr>';
- status.textContent=`${data.length} KUA terbaca. Pengubahan hanya diperbolehkan pada KUA simulasi Paket 9.8.`;
+let s98busy=false;
+function s98load(){
+ s67id('s98count').textContent=String(s96kuas.length);s67id('s98testcount').textContent=String(s96kuas.filter(k=>k.aktif).length);
+ s67id('s98target').innerHTML='<option value="">Pilih KUA</option>'+s96kuas.map(k=>`<option value="${h(k.id)}">${h(k.nama)}</option>`).join('');
+ s67id('s98body').innerHTML=s96kuas.map(k=>`<tr><td>${h(k.nama)}</td><td>${s96users.filter(p=>p.kua_id===k.id&&s96roles.get(p.user_id)!=='super_admin').length}</td><td>${k.aktif?'Aktif':'Nonaktif'}</td></tr>`).join('')||'<tr><td colspan="3">Belum ada KUA.</td></tr>';
+ s67id('s98status').textContent=`${s96kuas.length} KUA terdaftar. Perubahan harus diotorisasi server.`;
 }
-s67id('s98action').onchange=()=>{
- const action=s67id('s98action').value;
- s67id('s98target').disabled=action==='create';
- s67id('s98name').disabled=action==='delete_test';
-};
-s67id('s98refresh').onclick=()=>s67run(s98load);
+s67id('s98action').onchange=()=>{const action=s67id('s98action').value;s67id('s98target').disabled=action==='create';s67id('s98name').disabled=action==='activate'||action==='deactivate';};
+s67id('s98refresh').onclick=()=>s67run(s96load);
 s67id('s98submit').onclick=()=>s67run(async()=>{
- if(s98busy||s95role!=='super_admin'||!s67client)throw Error('Mode Super Admin tidak tersedia.');
- s98busy=true;
+ if(s95role!=='super_admin'||s98busy)throw Error('Akses Super Admin diperlukan.');s98busy=true;
  try{
-  const action=s67id('s98action').value,id=s67id('s98target').value,name=s67id('s98name').value.trim();
-  if(!['create','rename','delete_test'].includes(action))throw Error('Pilih tindakan terlebih dahulu.');
-  if(action!=='delete_test'&&(!name.startsWith(s98prefix)||name.length>120||name.length<=s98prefix.length))throw Error('Nama wajib dimulai KUA UJI SIKAP 9.8 dan memiliki nama tambahan.');
-  const target=s98kuas.find(k=>k.id===id);
-  if(action!=='create'&&(!target||!target.nama.startsWith(s98prefix)))throw Error('Pilih KUA simulasi 9.8 yang sah.');
-  if(action==='delete_test'&&s96users.some(p=>p.kua_id===id))throw Error('KUA masih memiliki profil pengguna. Penghapusan ditolak.');
-  const description=action==='create'?`BUAT: ${name}`:action==='rename'?`UBAH: ${target.nama} → ${name}`:`HAPUS KUA UJI KOSONG: ${target.nama}`;
-  if(!confirm(`PERUBAHAN NYATA SUPABASE (MODE UJI)\n\n${description}\n\nTidak menyentuh KUA operasional. Lanjutkan?`))return;
-  if(prompt('Ketik SETUJU untuk mengonfirmasi tindakan KUA uji:')!=='SETUJU')return;
-  const {data:auth,error:ae}=await s67client.auth.getUser();
-  if(ae||auth?.user?.id!==s67currentUser)throw Error('Sesi Super Admin tidak valid.');
-  const {data,error}=await s67client.rpc('sikap_kelola_kua_uji',{p_tindakan:action,p_kua_id:action==='create'?null:id,p_nama:action==='delete_test'?null:name});
-  if(error)throw Error('RPC menolak tindakan: '+error.message);
+  const action=s67id('s98action').value,id=s67id('s98target').value,name=s67id('s98name').value.trim(),target=s96kuas.find(k=>k.id===id);
+  if(!['create','rename','activate','deactivate'].includes(action))throw Error('Pilih tindakan KUA.');
+  if(['create','rename'].includes(action)&&(!/^KUA\s+/i.test(name)||name.length<7||name.length>120))throw Error('Nama KUA harus diawali KUA dan berisi 7–120 karakter.');
+  if(action!=='create'&&!target)throw Error('Pilih KUA yang terdaftar.');
+  if(action==='activate'&&target.aktif||action==='deactivate'&&!target.aktif)throw Error('Status KUA sudah sesuai.');
+  if(action==='deactivate'&&s96users.some(p=>p.kua_id===id&&p.aktif))throw Error('Nonaktifkan atau pindahkan dahulu semua pengguna aktif pada KUA ini.');
+  if(!confirm(`Simpan perubahan KUA: ${action==='create'?name:target.nama} (${action})?`))return;
+  if(prompt('Ketik SETUJU untuk mengonfirmasi:')!=='SETUJU')return;
+  const {error}=await s67client.rpc('sikap_kelola_kua_operasional',{p_tindakan:action,p_kua_id:action==='create'?null:id,p_nama:['create','rename'].includes(action)?name:null});
+  if(error)throw Error('Server menolak perubahan KUA: '+error.message+' Pastikan SQL pada paket telah dijalankan.');
   await s96load();
-  const expectedName=name;
-  if(action!=='delete_test'&&!s98kuas.some(k=>k.nama===expectedName))throw Error('RPC merespons tetapi nama KUA tidak ditemukan pada pembacaan ulang.');
-  if(action==='delete_test'&&s98kuas.some(k=>k.id===id))throw Error('Penghapusan belum terkonfirmasi pada pembacaan ulang.');
-  s67id('s98status').textContent='TERVERIFIKASI: '+JSON.stringify(data);
+  const verified=action==='create'?s96kuas.some(k=>k.nama===name):action==='rename'?s96kuas.some(k=>k.id===id&&k.nama===name):s96kuas.some(k=>k.id===id&&k.aktif===(action==='activate'));
+  if(!verified)throw Error('Perubahan belum terverifikasi dari database. Jangan mencoba berulang sebelum diperiksa.');
+  s67id('s98status').textContent='Perubahan KUA berhasil diverifikasi.';
  }finally{s98busy=false;}
 });
-const s98previousLoad=s96load;
-s96load=async function(){await s98previousLoad();await s98load()};
 
 // Konfigurasi publik frontend untuk proyek SIKAP; bukan service_role atau secret key.
 // Koneksi otomatis, tanpa menyimpan kredensial di localStorage.
