@@ -47,14 +47,24 @@ body{background:radial-gradient(ellipse at 100% 0%,#e9f4e9 0%,transparent 40%),#
 /* Prioritaskan hidden di seluruh halaman, termasuk panel lama */
 [hidden]{display:none!important}
 
-/* SIKAP: kedua blok tanda tangan memiliki lima baris yang sama.
-   Baris kosong di sisi pegawai sejajar dengan label Mengetahui di sisi atasan. */
-.signature-columns .signature-person{display:grid;grid-template-rows:24px 26px 82px minmax(26px,auto) 24px;align-content:start;align-items:start;text-align:center}
-.signature-columns .signature-person .signature-space{height:82px}
-.signature-columns .signature-heading-spacer{visibility:hidden}
-.signature-columns .signature-name{align-self:start}
-@media(max-width:650px){.signature-columns .signature-person{grid-template-rows:24px 26px 65px minmax(26px,auto) 24px}.signature-columns .signature-person .signature-space{height:65px}}
-@media print{.signature-columns .signature-person{grid-template-rows:27px 29px 75px minmax(29px,auto) 27px}.signature-columns .signature-person .signature-space{height:75px}}
+/* SIKAP CETAK: kedua penandatangan menggunakan 5 baris yang IDENTIK.
+   (1) Mengetahui/kosong (2) Jabatan (3) Ruang tanda tangan
+   (4) Nama (5) NIP. Satu baris kosong di kanan menjaga keselarasan. */
+.signature-columns .signature-person {
+  display:grid;
+  grid-template-rows:minmax(1.65em,auto) minmax(1.65em,auto) 82px minmax(1.65em,auto) minmax(1.65em,auto);
+  align-content:start;
+  justify-items:center;
+  line-height:1.65;
+}
+.signature-columns .signature-person > div { min-width:0; width:100%; text-align:center; }
+.signature-columns .signature-person .signature-space {height:auto!important;min-height:0!important;}
+.signature-columns .signature-person .signature-heading-spacer {visibility:hidden;}
+@media print {
+  .signature-columns .signature-person {
+    grid-template-rows:minmax(1.65em,auto) minmax(1.65em,auto) 75px minmax(1.65em,auto) minmax(1.65em,auto);
+  }
+}
 </style><style>
 .sikap-online-gate{max-width:760px;margin:35px auto;padding:25px;background:white;border:1px solid #c7ddcc;border-radius:17px;box-shadow:0 7px 24px #173c2610;color:#193b2c}.sikap-online-gate h1{font-size:25px}.sikap-online-gate p{line-height:1.65}.sikap-online-form{display:grid;gap:12px;margin:16px 0}.sikap-online-form label{font-weight:700}.sikap-online-form input{width:100%;display:block;margin-top:5px;border:1px solid #bbcfc0;border-radius:8px;padding:12px}.sikap-online-form button,#onlineBar button{border:0;border-radius:8px;background:#156744;color:white;padding:11px 14px;font-weight:700}.sikap-online-msg{padding:12px;background:#eaf4ed;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}#onlineBar{position:sticky;top:0;z-index:70;gap:12px;align-items:center;justify-content:flex-end;flex-wrap:wrap;padding:10px 18px;background:#fff8df;border-bottom:1px solid #e1c88d;font-size:12px;color:#3e3520}#onlineBar:not([hidden]){display:flex}#onlineBar strong{color:#915d12}#onlineBar button{padding:8px 10px}#sikapApp .sidebar{top:46px;height:calc(100vh - 46px)}@media print{#onlineBar,#onlineGate{display:none!important}#sikapApp{display:flex!important}}
 </style></head><body><div id="onlineGate" class="sikap-online-gate">
