@@ -422,17 +422,18 @@ removeEntry=async function(id){
   finally{sikap79deleting=false;}
 };
 // Tahap 9.1: profil pelengkap laporan terpisah dari identitas administratif.
-const s91fields={rank:'pangkat_golongan',unit:'unit_kerja',organization:'unit_organisasi',supervisorName:'nama_atasan',supervisorNip:'nip_atasan',supervisorPosition:'jabatan_atasan'};
+const s91fields={printPosition:'jabatan_laporan',rank:'pangkat_golongan',unit:'unit_kerja',organization:'unit_organisasi',supervisorName:'nama_atasan',supervisorNip:'nip_atasan',supervisorPosition:'jabatan_atasan'};
 async function s91loadProfile(){
  if(!s67client||!s67currentUser||!s67profile)throw Error('Sesi profil belum tersedia.');
  const {data,error}=await s67client.from('sikap_profil_laporan')
-  .select('pangkat_golongan,unit_kerja,unit_organisasi,nama_atasan,nip_atasan,jabatan_atasan')
+  .select('jabatan_laporan,pangkat_golongan,unit_kerja,unit_organisasi,nama_atasan,nip_atasan,jabatan_atasan')
   .eq('user_id',s67currentUser).maybeSingle();
  if(error)throw Error('Gagal mengambil profil laporan: '+error.message);
  // Jangan pernah membaca identitas pegawai dari localStorage saat login.
  db.profile.name=s67profile.nama||'';
  db.profile.nip=s67profile.nip_id||'';
- db.profile.position=s67profile.jabatan||'';
+ db.profile.position=(data?.jabatan_laporan||s67profile.jabatan||'').trim();
+ db.profile.printPosition=data?.jabatan_laporan||'';
  db.profile.rank=data?.pangkat_golongan||'';
  db.profile.unit=data?.unit_kerja||s67profile.kuaNama||'';
  db.profile.organization=data?.unit_organisasi||'Kantor Kementerian Agama Kab. Subang';
@@ -443,10 +444,10 @@ async function s91loadProfile(){
 }
 settings=function(){
  const p=db.profile||{};
- const readOnly=[['name','Nama pegawai'],['nip','NIP / ID Pegawai'],['position','Jabatan pegawai']];
- const editable=[['rank','Pangkat / Golongan'],['unit','Unit kerja'],['organization','Unit organisasi'],['supervisorName','Nama atasan langsung'],['supervisorNip','NIP atasan'],['supervisorPosition','Jabatan atasan']];
+ const readOnly=[['name','Nama pegawai'],['nip','NIP / ID Pegawai'],['position','Jabatan pada laporan (otomatis dari jabatan kedinasan)']];
+ const editable=[['printPosition','Jabatan kedinasan untuk laporan dan tanda tangan'],['rank','Pangkat / Golongan'],['unit','Unit kerja'],['organization','Unit organisasi'],['supervisorName','Nama atasan langsung'],['supervisorNip','NIP atasan'],['supervisorPosition','Jabatan atasan']];
  const field=(key,label,locked=false)=>`<div class="field"><label for="p_${key}">${h(label)}${locked?' (dari administrator)':''}</label><input id="p_${key}" value="${h(p[key]||'')}" placeholder="${h(label)}" ${locked?'readonly aria-readonly="true" style="background:#f0f4f0;color:#586c5e"':'maxlength="250"'}></div>`;
- E('content').innerHTML=`<section class="panel" style="margin-top:0"><h2>Identitas Pegawai dan Atasan — Online</h2><p class="info" style="margin-bottom:15px">Nama, NIP/ID, dan jabatan dikelola administrator. Informasi pelengkap digunakan untuk identitas pada laporan.</p><form id="s91profileForm" onsubmit="saveSettings(event)" class="formgrid">${readOnly.map(x=>field(x[0],x[1],true)).join('')}${editable.map(x=>field(x[0],x[1])).join('')}<div class="full actions"><button class="btn" id="s91save" type="submit">✓ Simpan Profil Online</button><button class="btn ghost" type="button" onclick="s91reload()">↻ Muat Profil dari Supabase</button></div><div class="full"><small class="muted" id="s91status">Data pelengkap laporan hanya dapat dibaca dan diperbarui oleh akun yang sedang login.</small></div></form></section><section class="panel"><h2>Cadangan dan Pemulihan</h2><p class="notice">Riwayat LCKH tersimpan secara daring. Fitur cadangan dan pemulihan melalui halaman ini tidak tersedia.</p></section><section class="panel"><h2>Status versi</h2><p class="notice">Periksa kelengkapan profil laporan sebelum mencetak dokumen.</p></section>`;
+ E('content').innerHTML=`<section class="panel" style="margin-top:0"><h2>Identitas Pegawai dan Atasan — Online</h2><p class="info" style="margin-bottom:15px">Peran sistem (Admin KUA atau Pegawai) hanya menentukan hak akses. Isi <b>Jabatan kedinasan untuk laporan dan tanda tangan</b> sesuai jabatan sebenarnya, misalnya Pengadministrasi Perkantoran, Penghulu, atau Penyuluh Agama Islam. Jabatan cetak tidak mengubah kewenangan akun.</p><form id="s91profileForm" onsubmit="saveSettings(event)" class="formgrid">${readOnly.map(x=>field(x[0],x[1],true)).join('')}${editable.map(x=>field(x[0],x[1])).join('')}<div class="full actions"><button class="btn" id="s91save" type="submit">✓ Simpan Profil Online</button><button class="btn ghost" type="button" onclick="s91reload()">↻ Muat Profil dari Supabase</button></div><div class="full"><small class="muted" id="s91status">Data pelengkap laporan hanya dapat dibaca dan diperbarui oleh akun yang sedang login.</small></div></form></section><section class="panel"><h2>Cadangan dan Pemulihan</h2><p class="notice">Riwayat LCKH tersimpan secara daring. Fitur cadangan dan pemulihan melalui halaman ini tidak tersedia.</p></section><section class="panel"><h2>Status versi</h2><p class="notice">Periksa kelengkapan profil laporan sebelum mencetak dokumen.</p></section>`;
 };
 let s91saving=false;
 saveSettings=async function(ev){
@@ -712,6 +713,13 @@ s67id('s67connect').click();
   }
 }
 </style>
+<style>
+/* Panel pembuatan akun hanya untuk dashboard administrasi, bukan LCKH Saya. */
+@media screen {
+ body:has(#sikapApp[style*="display: flex"]) #sikapManageAccounts {display:none!important}
+}
+@media print {#sikapManageAccounts{display:none!important}}
+</style>
 <section id="sikapManageAccounts" aria-label="Tambah akun pengguna">
  <h2 id="mgTitle">Kelola akun</h2><p class="mg-note">Akun dibuat hanya oleh pengelola yang berwenang. Sandi sementara, bila diberikan server, hanya ditampilkan sekali. Simpan secara aman. Tidak ada pendaftaran umum.</p>
  <form id="mgForm"><div class="mg-grid">
@@ -732,7 +740,8 @@ let shownRole='', loading=false;
 async function refreshRole(){
  const role=typeof s95role==='string'?s95role:'';
  const signed=!!s67currentUser&&!!s67client;
- const visible=signed&&(role==='super_admin'||role==='admin_kua');
+ const inPersonalLckh=typeof s953personal!=='undefined'&&s953personal;
+ const visible=signed&&(role==='super_admin'||role==='admin_kua')&&!inPersonalLckh&&$('sikapApp')?.style.display!=='flex';
  const panel=$('sikapManageAccounts');panel.style.display=visible?'block':'none';
  if(!visible){shownRole='';return;}
  if(shownRole===role)return;shownRole=role;
