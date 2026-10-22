@@ -918,7 +918,7 @@ setInterval(refreshRole,900);refreshRole();
 })();
 </script>
 <script>
-// SIKAP multi-KUA: pengaturan rangkap khusus Admin KUA; RLS database adalah pemeriksa akhir.
+// SIKAP multi-KUA: Admin KUA mengelola pegawai KUA sendiri dan penugasan rangkap diri sendiri; RLS memverifikasi.
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -927,8 +927,8 @@ let staff=[],loaded=new Map(),busy=false;
 function msg(t){$('sikapRangkapPesan').textContent=t;}
 window.sikapRangkapDaftar=async function(profiles,roles){
  if(typeof s95role==='undefined'||s95role!=='admin_kua')return;
- staff=profiles.filter(p=>p.kua_id===s67profile?.kua_id&&roles.get(p.user_id)==='pegawai');
- $('sikapRangkapPegawai').replaceChildren(new Option('Pilih pegawai',''),...staff.map(p=>new Option(`${p.nama} — ${p.nip_id}`,p.user_id)));
+ staff=profiles.filter(p=>p.kua_id===s67profile?.kua_id&&(roles.get(p.user_id)==='pegawai'||(roles.get(p.user_id)==='admin_kua'&&p.user_id===s67currentUser)));
+ $('sikapRangkapPegawai').replaceChildren(new Option('Pilih pegawai',''),...staff.map(p=>new Option(`${p.nama} — ${p.nip_id}${roles.get(p.user_id)==='admin_kua'?' (Admin KUA / saya)':''}`,p.user_id)));
  $('sikapRangkapUtama').value='';
  loaded=new Map();
  $('sikapRangkapOpsi').innerHTML=OPTIONS.map(r=>`<label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600"><input type="checkbox" value="${r}" style="width:18px;height:18px"> ${r==='KEPALA'?'Kepala KUA':r}</label>`).join('');
@@ -936,7 +936,7 @@ window.sikapRangkapDaftar=async function(profiles,roles){
  if(error){msg('Belum dapat membaca penugasan: '+error.message+' — Jalankan SQL paket revisi terlebih dahulu.');return;}
  if(data.length>1000){msg('Data penugasan melebihi batas; hubungi pengelola.');return;}
  for(const x of data)if(x.kua_id===s67profile.kua_id)loaded.set(x.user_id,x.peran_tambahan||[]);
- msg('Daftar penugasan siap. Pilih pegawai, centang tugas tambahan, lalu Simpan.');
+ msg('Daftar siap. Admin KUA dapat mengatur pegawai serta penugasan rangkap dirinya sendiri.');
 };
 $('sikapRangkapPegawai').addEventListener('change',()=>{
  const id=$('sikapRangkapPegawai').value;
@@ -960,7 +960,7 @@ $('sikapRangkapSimpan').onclick=async()=>{
   const {data,error:checkError}=await s67client.from('sikap_tugas_rangkap').select('peran_tambahan,kua_id').eq('user_id',id).single();
   if(checkError||checkError||!data||data.kua_id!==p.kua_id||JSON.stringify([...data.peran_tambahan].sort())!==JSON.stringify([...roles].sort()))throw Error('Verifikasi penyimpanan belum sesuai. Periksa data sebelum mencoba lagi.');
   loaded.set(id,roles);
-  msg('Penugasan rangkap '+p.nama+' berhasil tersimpan dan diverifikasi. Pegawai perlu memuat ulang LCKH untuk melihat pilihan baru.');
+  msg('Penugasan rangkap '+p.nama+' berhasil tersimpan dan diverifikasi. Muat ulang halaman sebelum mengisi LCKH untuk melihat kegiatan tambahan.');
  }catch(e){msg('Gagal: '+(e?.message||String(e)));}
  finally{busy=false;$('sikapRangkapSimpan').disabled=false;}
 };
