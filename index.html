@@ -663,9 +663,12 @@ async function s95load(){
   const roleRows=rr.error?[]:(rr.data||[]);
   const roleMap=new Map(roleRows.map(r=>[r.user_id,r.peran]));
   roleMap.set(s67currentUser,'admin_kua'); // Sudah divalidasi ketika login.
-  const unknown=profiles.filter(p=>!roleMap.has(p.user_id));
-  const staff=profiles.filter(p=>roleMap.get(p.user_id)==='pegawai');
-  const admins=profiles.filter(p=>roleMap.get(p.user_id)==='admin_kua');
+  // Akun Super Admin adalah pengelola sistem, bukan pegawai operasional KUA.
+  // Filter berdasarkan peran autentikasi, bukan berdasarkan nama atau jabatan.
+  const visibleProfiles=profiles.filter(p=>roleMap.get(p.user_id)!=='super_admin');
+  const unknown=visibleProfiles.filter(p=>!roleMap.has(p.user_id));
+  const staff=visibleProfiles.filter(p=>roleMap.get(p.user_id)==='pegawai');
+  const admins=visibleProfiles.filter(p=>roleMap.get(p.user_id)==='admin_kua');
   const staffIds=new Set(staff.map(p=>p.user_id));
   const stats=new Map();for(const e of entries){let a=stats.get(e.user_id);if(!a){a={count:0,days:new Set()};stats.set(e.user_id,a)}a.count++;a.days.add(e.tanggal)}
   const trusted=!rr.error&&!unknown.length;
@@ -675,7 +678,7 @@ async function s95load(){
   s67id('s95entries').textContent=trusted?String(entries.filter(e=>staffIds.has(e.user_id)).length):'—';
   s67id('s95secondary').textContent=trusted?`Pegawai mengisi LCKH: ${staff.filter(p=>stats.has(p.user_id)).length} dari ${staff.length} pegawai.`:'Statistik berdasarkan peran belum dapat diverifikasi. Periksa izin SELECT pada sikap_peran untuk Admin KUA.';
   s67id('s95who').textContent=`${s67profile.nama||'Admin'} · ${s67profile.kuaNama||'KUA'} · ${month}`;
-  s953profiles=profiles; s953roles=roleMap; s953trusted=trusted; await sikapRangkapDaftar(profiles,roleMap); s95allProfiles=profiles;s95counts=stats;s95page=1;s95renderRows()
+  s953profiles=visibleProfiles; s953roles=roleMap; s953trusted=trusted; await sikapRangkapDaftar(visibleProfiles,roleMap); s95allProfiles=visibleProfiles;s95counts=stats;s95page=1;s95renderRows()
   status.textContent=trusted?`Rekap dan peran berhasil dibaca untuk ${month}. Hasil mengikuti kebijakan RLS.`:`PERHATIAN: Data profil/LCKH terbaca, tetapi ${rr.error?'pembacaan peran ditolak: '+rr.error.message:unknown.length+' peran profil belum terlihat'}. Statistik pegawai disembunyikan agar tidak keliru.`;
  }catch(e){status.textContent='BELUM BERHASIL: '+(e?.message||String(e));s95allProfiles=[];s95counts=new Map();s67id('s95paging').innerHTML='';tbody.innerHTML='<tr><td colspan="8" class="empty">Data tidak ditampilkan karena pemeriksaan gagal.</td></tr>';throw e;
  }finally{s95busy=false;btn.disabled=false}
