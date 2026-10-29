@@ -1240,7 +1240,7 @@ $('sikapMasterForm').onsubmit=async(e)=>{e.preventDefault();if(!actionReady()){m
  const submitButton=$('sikapMasterForm').querySelector('button[type="submit"]');submitButton.disabled=true;
  try{
   if(id){
-   const {data,error}=await s67client.from('sikap_master_bersama').update({...base,code:code||null,role}).eq('id',id).select('id');
+   const {data,error}=await s67client.from('sikap_master_bersama').update({...base,code:code,role}).eq('id',id).select('id');
    if(error){msg('Gagal memperbarui master: '+error.message);return;}
    if(!data?.length){msg('Perubahan tidak tersimpan. Periksa izin UPDATE (RLS) Supabase untuk Super Admin.');return;}
    reset();await window.sikapLoadSharedMaster();msg('Master berhasil diperbarui.');return;
@@ -1249,7 +1249,7 @@ $('sikapMasterForm').onsubmit=async(e)=>{e.preventDefault();if(!actionReady()){m
   // Simpan satu per satu agar kegagalan satu jabatan tidak menyembunyikan hasil jabatan lain.
   for(const targetRole of remainingRoles){
    msg(`Menyimpan ${succeeded.length+1} dari ${remainingRoles.length} jabatan: ${targetRole}…`);
-   const {data,error}=await s67client.from('sikap_master_bersama').insert({...base,code:code||null,role:targetRole}).select('id');
+   const {data,error}=await s67client.from('sikap_master_bersama').insert({...base,code:code,role:targetRole}).select('id');
    if(error||!data?.length){failures.push(`${targetRole}: ${error?.message||'Ditolak oleh kebijakan INSERT/SELECT (RLS)'}`);}
    else succeeded.push(targetRole);
   }
