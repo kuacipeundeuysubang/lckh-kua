@@ -179,7 +179,7 @@ body:has(#onlineGate:not([hidden])) #sikapApp{display:none!important}
  <p id="s95status" class="notice" role="status">Memuat data…</p>
  <div class="grid" style="margin:16px 0"><div class="stat"><small>Pegawai terdaftar</small><strong id="s95total">—</strong></div><div class="stat"><small>Pegawai aktif</small><strong id="s95active">—</strong></div><div class="stat"><small>Administrator KUA</small><strong id="s95admins">—</strong></div><div class="stat"><small>LCKH pegawai periode</small><strong id="s95entries">—</strong></div></div><p class="notice" id="s95secondary" style="margin:0 0 14px">Pegawai mengisi LCKH: —</p>
  <div class="panel"><div class="section-head"><h2>Rekap LCKH berdasarkan periode</h2><label class="field">Bulan <input type="month" id="s95month" style="padding:9px;border:1px solid #d5e1d9;border-radius:9px"></label></div><div class="sikap-table-tools"><input id="s95filter" placeholder="Cari nama, NIP, jabatan…"><select id="s95statusfilter"><option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak aktif</option></select><label>Baris <select id="s95size"><option>10</option><option>25</option><option>50</option></select></label></div><div class="tablewrap"><table><thead><tr><th>Nama pegawai</th><th>NIP/ID</th><th>Jabatan</th><th>Peran</th><th>Status</th><th>Jumlah LCKH</th><th>Hari kegiatan</th><th>Rincian</th></tr></thead><tbody id="s95body"><tr><td colspan="8" class="empty">Data belum dimuat.</td></tr></tbody></table></div><div id="s95paging" class="sikap-pages"></div></div>
- <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><div class="actions"><button type="button" class="btn" id="s953printone" disabled>⎙ Cetak LCKH Pegawai</button><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div></div><p class="notice" id="s953detailstatus"></p><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
+ <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><div class="actions"><button type="button" class="btn" id="s953printone" disabled>⎙ Cetak LCKH</button><button type="button" class="btn alt s953-report-btn" data-s953-report="lckb" disabled>⎙ Cetak LCKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="rkb" disabled>⎙ Cetak RKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="wfo" disabled>⎙ Cetak WFO</button><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div></div><p class="notice" id="s953detailstatus"></p><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
  <p class="notice">Ringkasan pengawasan bersifat baca-saja. Batas tampilan: maksimal 1.000 pegawai dan 1.000 LCKH per periode. Jika terlampaui, tampilan memberi peringatan dan tidak menganggap hasil parsial sebagai total.</p>
  <section class="panel" id="sikapRangkapPanel" style="margin-top:18px">
  <h2>Penugasan Rangkap Pegawai</h2>
@@ -912,20 +912,56 @@ function s953returnAdmin(){
 }
 s67id('s953mine').onclick=()=>s67run(s953mine);
 s67id('s953backadmin').onclick=s953returnAdmin;
-s67id('s953close').onclick=()=>{s67id('s953detail').hidden=true;s953printData=null;s67id('s953printone').disabled=true};
-s67id('s953printone').onclick=s953printSelected;
+s67id('s953close').onclick=()=>{s67id('s953detail').hidden=true;s953printData=null;s67id('s953printone').disabled=true;document.querySelectorAll('[data-s953-report]').forEach(b=>b.disabled=true)};
+s67id('s953printone').onclick=()=>s953printSelected('lckh');
+ document.querySelectorAll('[data-s953-report]').forEach(b=>b.onclick=()=>s953printSelected(b.dataset.s953Report));
 s67id('s95body').addEventListener('click',ev=>{
  const b=ev.target.closest('[data-s953-user]');if(!b)return;
  s67run(()=>s953detail(b.getAttribute('data-s953-user')));
 });
 let s953printData=null;
-function s953printSelected(){
+function s953printSelected(type='lckh'){
  if(s95role!=='admin_kua'||s953personal||!s953trusted||!s953printData) {alert('Pratinjau belum tersedia atau akses Admin KUA tidak valid.');return;}
- const {profile:p,month,rows}=s953printData;
- const win=window.open('','_blank');if(!win){alert('Izinkan jendela pop-up untuk mencetak.');return;}
- const tr=rows.length?rows.map((r,i)=>`<tr><td>${i+1}</td><td>${h(r.tanggal)}</td><td>${h(r.uraian_kegiatan)}</td><td>${h(r.output_kegiatan)}</td><td>${h(r.volume)}</td><td>${h(r.satuan)}</td><td>${h(r.bukti_kegiatan)}</td></tr>`).join(''):'<tr><td colspan="7">Tidak ada kegiatan pada periode ini.</td></tr>';
- const title=`LCKH ${h(p.nama||'Pegawai')} - ${h(month)}`;
- win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${title}</title><style>body{font:12px Arial,sans-serif;color:#182e24;padding:16px}h2{text-align:center;margin:0 0 5px}.meta{margin:16px 0;line-height:1.7}table{width:100%;border-collapse:collapse}th,td{border:1px solid #666;padding:5px;text-align:left;vertical-align:top}th{background:#eaf1ec}.controls{text-align:right;margin-bottom:15px}button{padding:9px 14px}tr{break-inside:avoid}@page{size:A4 landscape;margin:12mm}@media print{.controls{display:none}thead{display:table-header-group}}</style></head><body><div class="controls"><button onclick="window.print()">Cetak / Simpan PDF</button></div><h2>LAPORAN CAPAIAN KINERJA HARIAN</h2><h2>BULAN ${h(month)}</h2><div class="meta">Nama: ${h(p.nama||'-')}<br>NIP: ${h(p.nip_id||'-')}<br>Jabatan: ${h(p.jabatan||'-')}<br>Jumlah kegiatan: ${rows.length}</div><table><thead><tr><th>No.</th><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody>${tr}</tbody></table><p>Hanya cetak. Tidak ada pengeditan data.</p></body></html>`);win.document.close();
+ if(!['lckh','lckb','rkb','wfo'].includes(type))return;
+ const {profile:p,month,rows,reportProfile:rp}=s953printData;
+ // Gunakan mesin perhitungan dan tabel yang sama dengan akun pegawai,
+ // tetapi jangan memodifikasi tampilan, data, atau sesi pegawai/Admin.
+ const entries=rows.map(x=>({
+   id:x.id,date:x.tanggal,createdAt:x.created_at||'',role:x.jabatan_kegiatan||'',
+   source:x.sumber_kegiatan==='master'?'master':'manual',
+   code:x.kode_sp||'',category:x.fungsi||'',service:x.nama_layanan||'',
+   detail:x.uraian_kegiatan||'',output:x.output_kegiatan||'',
+   evidence:x.bukti_kegiatan||'',volume:Number(x.volume)||0,
+   unit:x.satuan||'',note:x.keterangan||'',link:x.referensi_bukti||''
+ }));
+ const profile={name:p.nama||'',nip:p.nip_id||'',position:p.jabatan||'',
+  printPosition:rp?.jabatan_laporan||'',rank:rp?.pangkat_golongan||'',
+  unit:rp?.unit_kerja||s67profile.kuaNama||'',
+  organization:rp?.unit_organisasi||'Kantor Kementerian Agama',
+  supervisorName:rp?.nama_atasan||'',supervisorNip:rp?.nip_atasan||'',
+  supervisorPosition:rp?.jabatan_atasan||''};
+ const originalEntries=db.entries,originalProfile=db.profile,originalMonth=state.month,originalType=state.reportType;
+ let table='',identity='',signatures='',cols=[],unmapped=0,amount=0;
+ try{
+  db.entries=entries;db.profile=profile;state.month=month;state.reportType=type;
+  const result=reportRows();cols=colDefs();amount=result.length;
+  table=reportTableBody(result,cols);identity=reportIdentity();
+  if(type==='lckb')unmapped=lckbData(filtered()).unmapped.length;
+  // Titimangsa khusus cetak Admin, tidak membaca atau menimpa preferensi browser pegawai.
+  const signDate=month+'-'+String(new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate()).padStart(2,'0');
+  const loc=s67profile.kuaNama||'KUA';
+  const vp=v=>h(String(v||'').trim()||'Belum diisi');
+  signatures=`<div class="signature-area"><div class="signature-location"><div></div><div class="signature-location-date">${h(formatTitimangsa(loc,signDate))}</div></div><div class="signature-columns"><div class="signature-person"><div>${type==='wfo'?'Pejabat Penilai Kinerja':'Mengetahui,'}</div><div>${vp(profile.supervisorPosition)}</div><div class="signature-space"></div><div class="signature-name">${vp(profile.supervisorName)}</div><div>NIP. ${vp(profile.supervisorNip)}</div></div><div class="signature-person"><div>&nbsp;</div><div>${vp(sikapJabatanCetak())}</div><div class="signature-space"></div><div class="signature-name">${vp(profile.name)}</div><div>NIP. ${vp(profile.nip)}</div></div></div></div>`;
+ }finally{db.entries=originalEntries;db.profile=originalProfile;state.month=originalMonth;state.reportType=originalType;}
+ const titles={lckh:'LAPORAN CAPAIAN KINERJA HARIAN',lckb:'LAPORAN CAPAIAN KINERJA BULANAN',rkb:'RENCANA KINERJA BULANAN',wfo:'LAPORAN WFO (JUMAT)'};
+ const monthTitle=new Date(month+'-02T12:00:00').toLocaleDateString('id-ID',{month:'long',year:'numeric'}).toUpperCase();
+ const missing=['nama_atasan','nip_atasan','jabatan_atasan'].filter(k=>!String(rp?.[k]||'').trim());
+ if(missing.length && !confirm('Data atasan pada profil laporan pegawai belum lengkap atau belum dapat dibaca. Kolom tanda tangan ditampilkan sebagai "Belum diisi". Lanjutkan pratinjau?'))return;
+ const win=window.open('','_blank');if(!win){alert('Izinkan pop-up untuk mencetak laporan.');return;}
+ const css=`body{font:12px Arial,sans-serif;color:#173a2b;padding:12px}h2{margin:0;text-align:center;font-size:18px}h2+h2{margin:4px 0 20px}.controls{text-align:right;margin-bottom:18px}.controls button{padding:9px 14px}.report-identity{display:grid;grid-template-columns:140px 10px 1fr;gap:5px 8px;margin-bottom:18px}.identity-label{font-weight:500}.report-table{width:100%;border-collapse:collapse}.report-table th,.report-table td{border:1px solid #adb9b1;padding:7px 6px;text-align:left;vertical-align:top;white-space:pre-line}.report-table th{background:#edf3ef}.report-table thead{display:table-header-group}.report-table tr{break-inside:avoid}.date-group{text-align:center!important;white-space:nowrap!important}.day-name,.date-value{display:block}.signature-area{margin-top:45px;break-inside:avoid}.signature-location{display:grid;grid-template-columns:1fr 1fr;text-align:center;margin-bottom:8px}.signature-columns{display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center}.signature-person{line-height:1.6}.signature-space{height:78px}.signature-name{font-weight:bold;text-decoration:underline}.notice{font-size:11px;color:#64501b;margin:15px 0}.muted{font-size:11px;color:#526456}@page{size:A4 landscape;margin:12mm}@media print{body{padding:0}.controls{display:none}.signature-area{margin-top:32px}}`;
+ const note=type==='lckb'?'Volume merupakan rekap aktivitas LCKH, bukan otomatis jumlah pemohon unik.':type==='rkb'?'RKB dibentuk dari realisasi LCKH sesuai mekanisme SIKAP.':'Bersumber dari LCKH pada periode yang dipilih.';
+ win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${h(titles[type])} - ${h(profile.name)} - ${h(month)}</title><style>${css}</style></head><body><div class="controls"><button onclick="window.print()">Cetak / Simpan PDF</button></div><h2>${titles[type]}</h2><h2>BULAN ${h(monthTitle)}</h2>${identity}${unmapped?`<p class="notice">${unmapped} kegiatan belum dapat diklasifikasikan dalam LCKB.</p>`:''}<table class="report-table"><thead><tr>${cols.map(c=>`<th>${h(c)}</th>`).join('')}</tr></thead><tbody>${table}</tbody></table><p class="muted">${h(note)}</p>${signatures}</body></html>`);
+ win.document.close();
 }
 async function s953detail(userId){
  if(s95role!=='admin_kua'||s953personal||!s953trusted)throw Error('Mode monitoring tidak tersedia.');
@@ -934,21 +970,24 @@ async function s953detail(userId){
  const month=s67id('s95month').value;const [year,mon]=month.split('-').map(Number);
  if(!/^\d{4}-\d{2}$/.test(month)||mon<1||mon>12)throw Error('Periode tidak valid.');
  const d0=month+'-01',d1=new Date(Date.UTC(year,mon,1)).toISOString().slice(0,10);
- s953printData=null;s67id('s953printone').disabled=true;
+ s953printData=null;s67id('s953printone').disabled=true;document.querySelectorAll('[data-s953-report]').forEach(b=>b.disabled=true);
  const pane=s67id('s953detail');pane.hidden=false;
  s67id('s953detailtitle').textContent='Rincian LCKH — '+(p.nama||'Pegawai');
  s67id('s953detailstatus').textContent='Memuat rincian melalui Supabase…';
  s67id('s953detailbody').innerHTML='';
  const auth=await s67client.auth.getUser();if(auth.error||auth.data?.user?.id!==s67currentUser)throw Error('Sesi Admin tidak valid.');
  const {data,error}=await s67client.from('sikap_lckh')
-  .select('id,user_id,kua_id,tanggal,uraian_kegiatan,output_kegiatan,volume,satuan,bukti_kegiatan')
+  .select('id,user_id,kua_id,tanggal,created_at,kode_sp,fungsi,jabatan_kegiatan,sumber_kegiatan,nama_layanan,uraian_kegiatan,output_kegiatan,volume,satuan,bukti_kegiatan,keterangan,referensi_bukti')
   .eq('user_id',p.user_id).eq('kua_id',s67profile.kua_id).gte('tanggal',d0).lt('tanggal',d1)
   .order('tanggal',{ascending:false}).limit(1001);
  if(error)throw Error('Akses rincian ditolak: '+error.message);
  if(data.length>1000||data.some(x=>x.user_id!==userId||x.kua_id!==s67profile.kua_id))throw Error('Jumlah/lingkup data tidak sesuai, hasil tidak ditampilkan.');
  s67id('s953detailbody').innerHTML=data.length?data.map(x=>`<tr><td>${h(x.tanggal)}</td><td>${h(x.uraian_kegiatan)}</td><td>${h(x.output_kegiatan)}</td><td>${h(x.volume)}</td><td>${h(x.satuan)}</td><td>${h(x.bukti_kegiatan)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">Belum ada kegiatan di periode ini.</td></tr>';
- s953printData={profile:p,month,rows:data};s67id('s953printone').disabled=false;
- s67id('s953detailstatus').textContent=`${data.length} kegiatan • ${month} • baca-saja`;
+ const prof=await s67client.from('sikap_profil_laporan').select('jabatan_laporan,pangkat_golongan,unit_kerja,unit_organisasi,nama_atasan,nip_atasan,jabatan_atasan').eq('user_id',p.user_id).maybeSingle();
+ // RLS may disallow another user's report profile. Do not elevate permissions or invent identities.
+ const reportProfile=prof.error?null:prof.data;
+ s953printData={profile:p,month,rows:data,reportProfile};s67id('s953printone').disabled=false;document.querySelectorAll('[data-s953-report]').forEach(b=>b.disabled=false);
+ s67id('s953detailstatus').textContent=`${data.length} kegiatan • ${month} • baca-saja${!reportProfile?' • Data tanda tangan pegawai tidak terbaca, periksa RLS profil laporan':''}`;
  pane.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
