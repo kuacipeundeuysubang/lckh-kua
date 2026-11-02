@@ -686,13 +686,17 @@ submitEntry=async function(event){
    detail:manual?V('fdetail').trim():(old?.detail||m?.detail),
    output:manual?V('foutput').trim():(old?V('foutput').trim():m?.output),
    evidence:manual?V('fevidence').trim():(old?V('fevidence').trim():(m?.evidence||'')),
-   volume:Number(V('fvolume')),unit:V('funit').trim(),
+   volume:Number(V('fvolume')),unit:sikapNilaiSatuan(),
    note:V('fnote').trim(),link:old?.link||state.copyDraft?.link||''
  };
  if(e.code && (SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){const mapped=sikapKelompok888(e.code,e.category);e.code=mapped.code;e.category=mapped.category;e.service=mapped.service;}
- if(!/^\d{4}-\d{2}-\d{2}$/.test(e.date)||!e.role||!e.detail||!e.output||!e.unit||!Number.isFinite(e.volume)||e.volume<=0||!(FUNCTIONS9[e.category]||SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){
-   alert('Periksa kolom wajib serta pilih 28 layanan atau fungsi A–H sesuai jenis kegiatan.');return;
- }
+ const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
+ const validFungsi=Boolean(!e.code&&FUNCTIONS9[e.category]&&e.category!=='I');
+ if(!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(e.date)){alert('Tanggal pelaksanaan tidak valid.');return;}
+ if(!e.role||!e.detail||!e.output){alert('Jabatan, uraian, atau output belum lengkap.');return;}
+ if(!e.unit){alert('Pilih satuan, atau isi satuan manual jika memilih Lainnya.');return;}
+ if(!Number.isFinite(e.volume)||e.volume<=0){alert('Isi volume realisasi lebih dari nol.');return;}
  if(e.volume>9999999999.99||Math.abs(e.volume*100-Math.round(e.volume*100))>0.00001){alert('Volume maksimum 2 angka desimal.');return;}
  if(db.entries.some(x=>x.id!==old?.id&&x.date===e.date&&x.detail.trim().toLowerCase()===e.detail.toLowerCase()&&x.unit.trim().toLowerCase()===e.unit.toLowerCase())){
    if(!confirm('Ada kegiatan serupa pada tanggal ini. Tetap simpan kegiatan ini?'))return;
