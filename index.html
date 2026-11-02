@@ -944,7 +944,7 @@ function s953printSelected(type='lckh'){
  const profile={name:p.nama||'',nip:p.nip_id||'',position:p.jabatan||'',
   printPosition:rp?.jabatan_laporan||'',rank:rp?.pangkat_golongan||'',
   unit:rp?.unit_kerja||s67profile.kuaNama||'',
-  organization:rp?.unit_organisasi||'Kantor Kementerian Agama',
+  organization:(()=>{const org=String(rp?.unit_organisasi||'').trim();return !org||/^Kantor Kementerian Agama$/i.test(org)?'Kantor Kementerian Agama Kab. Subang':org;})(),
   supervisorName:provided.nama_atasan,supervisorNip:provided.nip_atasan,
   supervisorPosition:provided.jabatan_atasan};
  const originalEntries=db.entries,originalProfile=db.profile,originalMonth=state.month,originalType=state.reportType;
@@ -963,11 +963,11 @@ function s953printSelected(type='lckh'){
  const titles={lckh:'LAPORAN CAPAIAN KINERJA HARIAN',lckb:'LAPORAN CAPAIAN KINERJA BULANAN',rkb:'RENCANA KINERJA BULANAN',wfo:'LAPORAN WFO (JUMAT)'};
  const monthTitle=new Date(month+'-02T12:00:00').toLocaleDateString('id-ID',{month:'long',year:'numeric'}).toUpperCase();
  const missing=['nama_atasan','nip_atasan','jabatan_atasan'].filter(k=>!String(provided[k]||'').trim());
- if(missing.length && !confirm('Data atasan pada profil laporan pegawai belum lengkap atau belum dapat dibaca. Kolom tanda tangan ditampilkan sebagai "Belum diisi". Lanjutkan pratinjau?'))return;
+ if(missing.length){alert('Identitas atasan belum lengkap. Isi Nama, NIP, dan Jabatan atasan pada bagian Identitas Tanda Tangan dan Titimangsa Cetak sebelum mencetak. Data ini hanya untuk cetak dan tidak mengubah data pegawai.');s67id('s953super'+({'nama_atasan':'Name','nip_atasan':'Nip','jabatan_atasan':'Position'}[missing[0]])).focus();return;}
  const win=window.open('','_blank');if(!win){alert('Izinkan pop-up untuk mencetak laporan.');return;}
  const css=`body{font:12px Arial,sans-serif;color:#173a2b;padding:12px}h2{margin:0;text-align:center;font-size:18px}h2+h2{margin:4px 0 20px}.controls{text-align:right;margin-bottom:18px}.controls button{padding:9px 14px}.report-identity{display:grid;grid-template-columns:140px 10px 1fr;gap:5px 8px;margin-bottom:18px}.identity-label{font-weight:500}.report-table{width:100%;border-collapse:collapse}.report-table th,.report-table td{border:1px solid #adb9b1;padding:7px 6px;text-align:left;vertical-align:top;white-space:pre-line}.report-table th{background:#edf3ef}.report-table thead{display:table-header-group}.report-table tr{break-inside:avoid}.report-table td{overflow-wrap:anywhere;word-break:normal}.report-table td:nth-child(3),.report-table td:nth-child(4){white-space:pre-line}.date-group{text-align:center!important;white-space:nowrap!important}.day-name,.date-value{display:block}.signature-area{margin-top:45px;break-inside:avoid}.signature-location{display:grid;grid-template-columns:1fr 1fr;text-align:center;margin-bottom:8px}.signature-columns{display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center}.signature-person{line-height:1.6}.signature-space{height:78px}.signature-name{font-weight:bold;text-decoration:underline}.notice{font-size:11px;color:#64501b;margin:15px 0}.muted{font-size:11px;color:#526456}@page{size:A4 landscape;margin:12mm}@media print{body{padding:0}.controls{display:none}.signature-area{margin-top:32px}}`;
- const note=type==='lckb'?'Volume merupakan rekap aktivitas LCKH, bukan otomatis jumlah pemohon unik.':type==='rkb'?'RKB dibentuk dari realisasi LCKH sesuai mekanisme SIKAP.':'Bersumber dari LCKH pada periode yang dipilih.';
- win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${h(titles[type])} - ${h(profile.name)} - ${h(month)}</title><style>${css}</style></head><body><div class="controls"><button onclick="window.print()">Cetak / Simpan PDF</button></div><h2>${titles[type]}</h2><h2>BULAN ${h(monthTitle)}</h2>${identity}${unmapped?`<p class="notice">${unmapped} kegiatan belum dapat diklasifikasikan dalam LCKB.</p>`:''}<table class="report-table"><thead><tr>${cols.map(c=>`<th>${h(c)}</th>`).join('')}</tr></thead><tbody>${table}</tbody></table><p class="muted">${h(note)}</p>${signatures}</body></html>`);
+ const note=''; // Keterangan sumber internal tidak dicetak dalam laporan resmi.
+ win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${h(titles[type])} - ${h(profile.name)} - ${h(month)}</title><style>${css}</style></head><body><div class="controls"><button onclick="window.print()">Cetak / Simpan PDF</button></div><h2>${titles[type]}</h2><h2>BULAN ${h(monthTitle)}</h2>${identity}${unmapped?`<p class="notice">${unmapped} kegiatan belum dapat diklasifikasikan dalam LCKB.</p>`:''}<table class="report-table"><thead><tr>${cols.map(c=>`<th>${h(c)}</th>`).join('')}</tr></thead><tbody>${table}</tbody></table>${note?`<p class="muted">${h(note)}</p>`:""}${signatures}</body></html>`);
  win.document.close();
 }
 async function s953detail(userId){
@@ -999,7 +999,7 @@ async function s953detail(userId){
  s67id('s953superPosition').value=reportProfile?.jabatan_atasan||'';
  s67id('s953signPlace').value='Cipeundeuy';
  s67id('s953signDate').value=month+'-'+String(new Date(year,mon,0).getDate()).padStart(2,'0');
- s67id('s953superSource').textContent=prof.error?'Data profil laporan tidak dapat dibaca oleh Admin KUA: '+prof.error.message+'. Isi identitas atasan di atas untuk dokumen cetak.':!reportProfile?'Profil laporan pegawai belum ditemukan atau belum dapat dibaca. Isi identitas atasan untuk dokumen cetak.':'Identitas atasan diisi dari profil laporan pegawai; dapat disesuaikan khusus untuk cetak tanpa menyimpan perubahan.';
+ s67id('s953superSource').textContent=prof.error?'Data profil laporan tidak dapat dibaca oleh Admin KUA: '+prof.error.message+'. Isi identitas atasan di atas untuk dokumen cetak.':!reportProfile?'Profil laporan pegawai belum ditemukan atau belum dapat dibaca. Lengkapi Nama, NIP, dan Jabatan atasan di atas sebelum mencetak.':'Identitas atasan diisi dari profil laporan pegawai; dapat disesuaikan khusus untuk cetak tanpa menyimpan perubahan.';
  s953printData={profile:p,month,rows:data,reportProfile};s67id('s953printone').disabled=false;document.querySelectorAll('[data-s953-report]').forEach(b=>b.disabled=false);
  s67id('s953detailstatus').textContent=`${data.length} kegiatan • ${month} • baca-saja${!reportProfile?' • Data tanda tangan pegawai tidak terbaca, periksa RLS profil laporan':''}`;
  pane.scrollIntoView({behavior:'smooth',block:'start'});
