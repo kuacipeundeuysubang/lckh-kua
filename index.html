@@ -360,16 +360,63 @@ function lckbData(items){
  const rows=[...grouped.values()].sort((a,b)=>{const ak=a.code.startsWith('SP')?'0'+a.code:'1'+a.category;const bk=b.code.startsWith('SP')?'0'+b.code:'1'+b.category;return ak.localeCompare(bk)}).map(g=>{
   const detailList=[...g.functionDetails.values()];
   const detail=g.detail+(detailList.length?'\n'+detailList.map((d,i)=>(i+1)+'. '+d.text+' ('+d.volume+' '+d.unit+')').join('\n'):'');
-  return {...g,detail,unit:g.units.size===1?[...g.units][0]:'Campuran',volumeText:[...g.volumeByUnit.values()].map(x=>sikapFormatVolume(x.volume)+' '+x.name).join('\n'),evidence:sikapRingkasBukti([...g.evidences])};
+  return {...g,detail,unit:g.units.size===1?[...g.units][0]:'Campuran',volumeText:[...g.volumeByUnit.values()].map(x=>sikapFormatVolume(x.volume)+' '+x.name).join('\n'),evidence:g.code.startsWith('SP-')?sikapBuktiUtamaLayanan(g.code,[...g.evidences]):sikapRingkasBuktiFungsi([...g.evidences])};
  });
  return {rows,unmapped};
 }
 function sikapFormatVolume(n){return Number(n||0).toLocaleString('id-ID',{maximumFractionDigits:2})}
-function sikapRingkasBukti(items){
- const unique=[...new Map(items.flatMap(s=>String(s||'').split(/\s*;\s*/)).map(s=>s.trim()).filter(Boolean).map(s=>[s.toLocaleLowerCase('id-ID'),s])).values()];
- const shown=unique.slice(0,4);
- return shown.map((item,i)=>(i+1)+'. '+item).join('\n')+(unique.length>4?'\n… dan '+(unique.length-4)+' jenis bukti lainnya (lihat rincian LCKH)':'');
+// LCKB ringkas: satu bukti utama yang benar-benar tercatat per standar pelayanan.
+// Kata kunci membantu memilih dokumen paling representatif dari bukti LCKH yang ada.
+const SIKAP_BUKTI_UTAMA_888={
+ 'SP-A01':['berkas nikah','pemeriksaan nikah','checklist','akta nikah','buku nikah'],
+ 'SP-A02':['taukil wali','berwakil wali','ikrar wali'],
+ 'SP-A03':['rekomendasi nikah'],
+ 'SP-A04':['verifikasi perbaikan','perubahan data','perbaikan data'],
+ 'SP-A05':['buku nikah pengganti','kutipan akta nikah pengganti'],
+ 'SP-A06':['legalisasi'],
+ 'SP-A07':['luar negeri','model ln'],
+ 'SP-A08':['status pernikahan','belum menikah','skbm'],
+ 'SP-A09':['isbat nikah'],
+ 'SP-A10':['perjanjian perkawinan'],
+ 'SP-A11':['rujuk'],
+ 'SP-B01':['bimwin','bimbingan perkawinan','daftar hadir'],
+ 'SP-B02':['keluarga sakinah','konsultasi keluarga'],
+ 'SP-B03':['mediasi','konsultasi keluarga'],
+ 'SP-C01':['identitas masjid','nimas','simas'],
+ 'SP-C02':['perubahan data masjid','simas'],
+ 'SP-C03':['rekomendasi bantuan','masjid'],
+ 'SP-C04':['perubahan status musala','simas'],
+ 'SP-D01':['konsultasi','register konsultasi'],
+ 'SP-D02':['kalibrasi kiblat','arah kiblat'],
+ 'SP-E01':['halal','sihalal','pendampingan'],
+ 'SP-E02':['konflik','deteksi dini'],
+ 'SP-F01':['akta ikrar wakaf','aiw','apaiw'],
+ 'SP-F02':['salinan akta ikrar','aiw','apaiw'],
+ 'SP-F03':['penggantian nazhir','pengantar nazhir'],
+ 'SP-G01':['data keagamaan','verifikasi data'],
+ 'SP-G02':['rekomendasi bantuan keagamaan'],
+ 'SP-G03':['bukti daftar majelis taklim','majelis taklim']
+};
+function sikapDaftarBukti(items){
+ return [...new Map(items.flatMap(v=>String(v||'').split(/\s*;\s*/))
+  .map(v=>v.trim()).filter(Boolean).map(v=>[v.toLocaleLowerCase('id-ID'),v])).values()];
 }
+function sikapBuktiUtamaLayanan(code,items){
+ const bukti=sikapDaftarBukti(items);
+ if(!bukti.length)return 'Belum tercatat';
+ const keywords=SIKAP_BUKTI_UTAMA_888[code]||[];
+ for(const kata of keywords){
+  const cocok=bukti.find(x=>x.toLocaleLowerCase('id-ID').includes(kata));
+  if(cocok)return cocok;
+ }
+ // Tidak membuat dokumen baru jika tidak ada bukti yang cocok.
+ return bukti[0];
+}
+function sikapRingkasBuktiFungsi(items){
+ const bukti=sikapDaftarBukti(items);
+ return bukti.length?bukti.join('\n'):'Belum tercatat';
+}
+
 function reportRows(){if(state.reportType==='lckh')return filtered();if(state.reportType==='wfo')return filtered().filter(e=>new Date(e.date+'T12:00:00').getDay()===5);if(state.reportType==='rkb')return filtered().map(e=>({...e,volume:(Number(e.volume)||0)+1}));return lckbData(filtered()).rows}
 function colDefs(){return state.reportType==='rkb'?['Tanggal','Uraian Kinerja','Jumlah','Satuan']:state.reportType==='lckb'?['No.','Uraian Tugas / Kegiatan','Volume','Bukti Dokumen']:['Hari / Tanggal','No.','Kegiatan','Output','Volume','Satuan','Ket.']}
 function dd(s){return new Date(s+'T12:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}
