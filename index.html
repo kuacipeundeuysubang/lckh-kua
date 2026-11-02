@@ -178,8 +178,8 @@ body:has(#onlineGate:not([hidden])) #sikapApp{display:none!important}
  <div class="actions" style="margin:15px 0"><button class="btn" type="button" id="s953mine">✎ LCKH Saya</button><button class="btn alt" type="button" id="s953backadmin" hidden>↩ Dashboard Admin KUA</button></div>
  <p id="s95status" class="notice" role="status">Memuat data…</p>
  <div class="grid" style="margin:16px 0"><div class="stat"><small>Pegawai terdaftar</small><strong id="s95total">—</strong></div><div class="stat"><small>Pegawai aktif</small><strong id="s95active">—</strong></div><div class="stat"><small>Administrator KUA</small><strong id="s95admins">—</strong></div><div class="stat"><small>LCKH pegawai periode</small><strong id="s95entries">—</strong></div></div><p class="notice" id="s95secondary" style="margin:0 0 14px">Pegawai mengisi LCKH: —</p>
- <div class="panel"><div class="section-head"><h2>Cetak laporan seluruh pegawai</h2><button class="btn" type="button" id="s95printall">⎙ Cetak Semua Pegawai / PDF</button></div><p class="notice">Baca dan cetak saja. Mencetak LCKH seluruh akun berperan Pegawai dalam KUA ini, berdasarkan bulan yang dipilih di bawah. Tidak menyediakan tombol edit, simpan, atau hapus. Data diambil langsung dari Supabase sesuai izin RLS.</p><p class="notice" id="s95printstatus" role="status"></p></div><div class="panel"><div class="section-head"><h2>Rekap LCKH berdasarkan periode</h2><label class="field">Bulan <input type="month" id="s95month" style="padding:9px;border:1px solid #d5e1d9;border-radius:9px"></label></div><div class="sikap-table-tools"><input id="s95filter" placeholder="Cari nama, NIP, jabatan…"><select id="s95statusfilter"><option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak aktif</option></select><label>Baris <select id="s95size"><option>10</option><option>25</option><option>50</option></select></label></div><div class="tablewrap"><table><thead><tr><th>Nama pegawai</th><th>NIP/ID</th><th>Jabatan</th><th>Peran</th><th>Status</th><th>Jumlah LCKH</th><th>Hari kegiatan</th><th>Rincian</th></tr></thead><tbody id="s95body"><tr><td colspan="8" class="empty">Data belum dimuat.</td></tr></tbody></table></div><div id="s95paging" class="sikap-pages"></div></div>
- <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div><p class="notice" id="s953detailstatus"></p><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
+ <div class="panel"><div class="section-head"><h2>Rekap LCKH berdasarkan periode</h2><label class="field">Bulan <input type="month" id="s95month" style="padding:9px;border:1px solid #d5e1d9;border-radius:9px"></label></div><div class="sikap-table-tools"><input id="s95filter" placeholder="Cari nama, NIP, jabatan…"><select id="s95statusfilter"><option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak aktif</option></select><label>Baris <select id="s95size"><option>10</option><option>25</option><option>50</option></select></label></div><div class="tablewrap"><table><thead><tr><th>Nama pegawai</th><th>NIP/ID</th><th>Jabatan</th><th>Peran</th><th>Status</th><th>Jumlah LCKH</th><th>Hari kegiatan</th><th>Rincian</th></tr></thead><tbody id="s95body"><tr><td colspan="8" class="empty">Data belum dimuat.</td></tr></tbody></table></div><div id="s95paging" class="sikap-pages"></div></div>
+ <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><div class="actions"><button type="button" class="btn" id="s953printone" disabled>⎙ Cetak LCKH Pegawai</button><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div></div><p class="notice" id="s953detailstatus"></p><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
  <p class="notice">Ringkasan pengawasan bersifat baca-saja. Batas tampilan: maksimal 1.000 pegawai dan 1.000 LCKH per periode. Jika terlampaui, tampilan memberi peringatan dan tidak menganggap hasil parsial sebagai total.</p>
  <section class="panel" id="sikapRangkapPanel" style="margin-top:18px">
  <h2>Penugasan Rangkap Pegawai</h2>
@@ -480,7 +480,7 @@ async function sikapSalinSimpan(){
  const field=k=>document.querySelector(`[data-salin="${k}"][data-idx="${i}"]`)?.value?.trim()||'';
  return {...x,date:target,output:field('output'),volume:Number(field('volume')),unit:field('unit'),evidence:field('evidence'),note:field('note')};
  });
- if(records.some(x=>!x.role||!x.detail||!x.output||!x.unit||!FUNCTIONS9[x.category]||!Number.isFinite(x.volume)||x.volume<=0||x.volume>9999999999.99||Math.abs(x.volume*100-Math.round(x.volume*100))>0.00001)){alert('Periksa output, fungsi A–H, volume maksimal 2 desimal, dan satuan tiap kegiatan.');return;}
+ if(records.some(x=>!x.role||!x.detail||!x.output||!x.unit||!(FUNCTIONS9[x.category]||SIKAP_STANDAR_888[x.code]||SIKAP_PETA_LAMA_888[x.code])||!Number.isFinite(x.volume)||x.volume<=0||x.volume>9999999999.99||Math.abs(x.volume*100-Math.round(x.volume*100))>0.00001)){alert('Periksa output, jenis kegiatan (28 layanan atau fungsi A–H), volume maksimal 2 desimal, dan satuan tiap kegiatan.');return;}
  const existing=db.entries.filter(x=>x.date===target);
  const key=x=>x.detail.trim().toLowerCase()+'|'+x.unit.trim().toLowerCase();
  const duplicates=records.filter((x,i)=>existing.some(y=>key(y)===key(x))||records.findIndex(y=>key(y)===key(x))!==i);
@@ -689,8 +689,9 @@ submitEntry=async function(event){
    volume:Number(V('fvolume')),unit:V('funit').trim(),
    note:V('fnote').trim(),link:old?.link||state.copyDraft?.link||''
  };
- if(!/^\d{4}-\d{2}-\d{2}$/.test(e.date)||!e.role||!e.detail||!e.output||!e.unit||!Number.isFinite(e.volume)||e.volume<=0||!FUNCTIONS9[e.category]){
-   alert('Periksa semua kolom wajib serta fungsi A–H.');return;
+ if(e.code && (SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){const mapped=sikapKelompok888(e.code,e.category);e.code=mapped.code;e.category=mapped.category;e.service=mapped.service;}
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(e.date)||!e.role||!e.detail||!e.output||!e.unit||!Number.isFinite(e.volume)||e.volume<=0||!(FUNCTIONS9[e.category]||SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){
+   alert('Periksa kolom wajib serta pilih 28 layanan atau fungsi A–H sesuai jenis kegiatan.');return;
  }
  if(e.volume>9999999999.99||Math.abs(e.volume*100-Math.round(e.volume*100))>0.00001){alert('Volume maksimum 2 angka desimal.');return;}
  if(db.entries.some(x=>x.id!==old?.id&&x.date===e.date&&x.detail.trim().toLowerCase()===e.detail.toLowerCase()&&x.unit.trim().toLowerCase()===e.unit.toLowerCase())){
@@ -885,59 +886,6 @@ s67id('s95month').value=today().slice(0,7);
 s67id('s95month').onchange=()=>s67run(s95load);
 s67id('s95refresh').onclick=()=>s67run(s95load);
 
-// Admin KUA: cetak massal baca-saja. SELECT saja, tidak ada UPDATE/INSERT/DELETE.
-// LCKH tiap pegawai dipisahkan pada halaman tersendiri, tanpa memodifikasi db.entries.
-let s95printing=false;
-async function s95printAll(){
- if(s95printing)return;
- if(s95role!=='admin_kua'||s953personal||!s953trusted||!s67profile?.kua_id)throw Error('Cetak massal hanya untuk Admin KUA dengan daftar peran terverifikasi.');
- const month=s67id('s95month').value;
- if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))throw Error('Periode bulan tidak valid.');
- const staff=s953profiles.filter(p=>p.kua_id===s67profile.kua_id&&s953roles.get(p.user_id)==='pegawai');
- if(!staff.length)throw Error('Tidak ada akun Pegawai terverifikasi pada KUA ini.');
- // Membuka jendela pada klik langsung agar tidak diblokir pemblokir pop-up.
- const win=window.open('','_blank');
- if(!win)throw Error('Izinkan pop-up untuk mencetak seluruh pegawai.');
- win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Memuat laporan</title></head><body><p>Menyiapkan laporan baca-saja...</p></body></html>');
- const status=s67id('s95printstatus'),button=s67id('s95printall');
- s95printing=true;button.disabled=true;
- try{
-  status.textContent='Mengambil seluruh LCKH untuk '+staff.length+' pegawai pada '+month+'…';
-  const auth=await s67client.auth.getUser();
-  if(auth.error||auth.data?.user?.id!==s67currentUser)throw Error('Sesi Admin KUA tidak valid.');
-  const [year,mon]=month.split('-').map(Number),d0=month+'-01',d1=new Date(Date.UTC(year,mon,1)).toISOString().slice(0,10);
-  const rows=[];let start=0;const limit=500;
-  for(;;){
-   const res=await s67client.from('sikap_lckh')
-    .select('id,user_id,kua_id,tanggal,jabatan_kegiatan,uraian_kegiatan,output_kegiatan,volume,satuan,bukti_kegiatan,fungsi,kode_sp')
-    .eq('kua_id',s67profile.kua_id).gte('tanggal',d0).lt('tanggal',d1)
-    .order('tanggal',{ascending:true}).order('id',{ascending:true}).range(start,start+limit-1);
-   if(res.error)throw Error('Akses SELECT LCKH ditolak atau gagal: '+res.error.message);
-   const batch=res.data||[];
-   if(batch.some(x=>x.kua_id!==s67profile.kua_id))throw Error('Data di luar KUA ditemukan. Pencetakan dibatalkan.');
-   rows.push(...batch);start+=batch.length;
-   if(batch.length<limit)break;
-   if(start>=25000)throw Error('Jumlah data melebihi 25.000 baris. Perkecil periode atau siapkan mekanisme ekspor server.');
-  }
-  const ids=new Set(staff.map(x=>x.user_id));
-  const unknown=rows.filter(x=>!ids.has(x.user_id));
-  if(unknown.length)throw Error('Ada LCKH milik akun yang bukan pegawai terverifikasi ('+unknown.length+' baris). Cetak dibatalkan agar cakupan tidak keliru.');
-  const safe=(v)=>h(v==null?'':String(v));
-  const monthLabel=new Date(year,mon-1,2).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-  let pages=staff.map(p=>{
-   const items=rows.filter(r=>r.user_id===p.user_id);
-   const tr=items.length?items.map((r,i)=>`<tr><td>${i+1}</td><td>${safe(r.tanggal)}</td><td>${safe(r.jabatan_kegiatan)}</td><td>${safe(r.uraian_kegiatan)}</td><td>${safe(r.output_kegiatan)}</td><td>${safe(r.volume)}</td><td>${safe(r.satuan)}</td><td>${safe(r.bukti_kegiatan)}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">Tidak ada LCKH pada bulan ini</td></tr>';
-   return `<section class="sheet"><header><h2>LAPORAN CAPAIAN KINERJA HARIAN</h2><h3>BULAN ${safe(monthLabel.toUpperCase())}</h3><div>Unit kerja: ${safe(s67profile.kuaNama||'KUA')}</div><div>Nama: ${safe(p.nama||'-')}</div><div>NIP: ${safe(p.nip_id||'-')}</div><div>Jabatan: ${safe(p.jabatan||'-')}</div></header><table><thead><tr><th>No.</th><th>Tanggal</th><th>Jabatan Kegiatan</th><th>Uraian Kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti Kegiatan</th></tr></thead><tbody>${tr}</tbody></table><p class="foot">${items.length} entri LCKH · Sumber: data SIKAP (baca-saja) · ${safe(monthLabel)}</p></section>`;
-  }).join('');
-  win.document.open();
-  win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>LCKH Seluruh Pegawai - ${safe(monthLabel)}</title><style>body{font:12px Arial,sans-serif;color:#172c23;margin:18px}h2,h3{text-align:center;margin:0 0 7px}header{line-height:1.65;margin-bottom:16px}table{border-collapse:collapse;width:100%;font-size:10px}th,td{border:1px solid #666;padding:5px;vertical-align:top;text-align:left}th{background:#e9f2ec}.sheet{break-after:page;page-break-after:always;margin-bottom:35px}.sheet:last-child{break-after:auto;page-break-after:auto}.foot{font-size:10px;color:#555}.empty{text-align:center;padding:16px}.print-toolbar{text-align:right;margin-bottom:12px}.print-toolbar button{padding:9px 16px;background:#14644c;color:#fff;border:0;border-radius:6px;cursor:pointer}@page{size:A4 landscape;margin:12mm}@media print{.print-toolbar{display:none}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}}</style></head><body><div class="print-toolbar"><button onclick="window.print()">Cetak / Simpan PDF</button></div>${pages}</body></html>`);
-  win.document.close();
-  status.textContent=`Pratinjau siap: ${staff.length} pegawai, ${rows.length} entri LCKH pada ${month}. Klik Cetak / Simpan PDF di jendela laporan.`;
- }catch(e){status.textContent='Gagal: '+(e?.message||String(e));win.document.body.textContent='Laporan gagal: '+(e?.message||String(e));throw e}
- finally{s95printing=false;button.disabled=false}
-}
-s67id('s95printall').onclick=()=>s67run(s95printAll);
-
 // Tahap 9.5.3: detail baca-saja dan dua ruang kerja pada akun Admin KUA.
 let s953profiles=[],s953roles=new Map(),s953trusted=false,s953personal=false;
 async function s953mine(){
@@ -960,11 +908,21 @@ function s953returnAdmin(){
 }
 s67id('s953mine').onclick=()=>s67run(s953mine);
 s67id('s953backadmin').onclick=s953returnAdmin;
-s67id('s953close').onclick=()=>{s67id('s953detail').hidden=true};
+s67id('s953close').onclick=()=>{s67id('s953detail').hidden=true;s953printData=null;s67id('s953printone').disabled=true};
+s67id('s953printone').onclick=s953printSelected;
 s67id('s95body').addEventListener('click',ev=>{
  const b=ev.target.closest('[data-s953-user]');if(!b)return;
  s67run(()=>s953detail(b.getAttribute('data-s953-user')));
 });
+let s953printData=null;
+function s953printSelected(){
+ if(s95role!=='admin_kua'||s953personal||!s953trusted||!s953printData) {alert('Pratinjau belum tersedia atau akses Admin KUA tidak valid.');return;}
+ const {profile:p,month,rows}=s953printData;
+ const win=window.open('','_blank');if(!win){alert('Izinkan jendela pop-up untuk mencetak.');return;}
+ const tr=rows.length?rows.map((r,i)=>`<tr><td>${i+1}</td><td>${h(r.tanggal)}</td><td>${h(r.uraian_kegiatan)}</td><td>${h(r.output_kegiatan)}</td><td>${h(r.volume)}</td><td>${h(r.satuan)}</td><td>${h(r.bukti_kegiatan)}</td></tr>`).join(''):'<tr><td colspan="7">Tidak ada kegiatan pada periode ini.</td></tr>';
+ const title=`LCKH ${h(p.nama||'Pegawai')} - ${h(month)}`;
+ win.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>${title}</title><style>body{font:12px Arial,sans-serif;color:#182e24;padding:16px}h2{text-align:center;margin:0 0 5px}.meta{margin:16px 0;line-height:1.7}table{width:100%;border-collapse:collapse}th,td{border:1px solid #666;padding:5px;text-align:left;vertical-align:top}th{background:#eaf1ec}.controls{text-align:right;margin-bottom:15px}button{padding:9px 14px}tr{break-inside:avoid}@page{size:A4 landscape;margin:12mm}@media print{.controls{display:none}thead{display:table-header-group}}</style></head><body><div class="controls"><button onclick="window.print()">Cetak / Simpan PDF</button></div><h2>LAPORAN CAPAIAN KINERJA HARIAN</h2><h2>BULAN ${h(month)}</h2><div class="meta">Nama: ${h(p.nama||'-')}<br>NIP: ${h(p.nip_id||'-')}<br>Jabatan: ${h(p.jabatan||'-')}<br>Jumlah kegiatan: ${rows.length}</div><table><thead><tr><th>No.</th><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody>${tr}</tbody></table><p>Hanya cetak. Tidak ada pengeditan data.</p></body></html>`);win.document.close();
+}
 async function s953detail(userId){
  if(s95role!=='admin_kua'||s953personal||!s953trusted)throw Error('Mode monitoring tidak tersedia.');
  const p=s953profiles.find(x=>x.user_id===userId);
@@ -972,6 +930,7 @@ async function s953detail(userId){
  const month=s67id('s95month').value;const [year,mon]=month.split('-').map(Number);
  if(!/^\d{4}-\d{2}$/.test(month)||mon<1||mon>12)throw Error('Periode tidak valid.');
  const d0=month+'-01',d1=new Date(Date.UTC(year,mon,1)).toISOString().slice(0,10);
+ s953printData=null;s67id('s953printone').disabled=true;
  const pane=s67id('s953detail');pane.hidden=false;
  s67id('s953detailtitle').textContent='Rincian LCKH — '+(p.nama||'Pegawai');
  s67id('s953detailstatus').textContent='Memuat rincian melalui Supabase…';
@@ -984,6 +943,7 @@ async function s953detail(userId){
  if(error)throw Error('Akses rincian ditolak: '+error.message);
  if(data.length>1000||data.some(x=>x.user_id!==userId||x.kua_id!==s67profile.kua_id))throw Error('Jumlah/lingkup data tidak sesuai, hasil tidak ditampilkan.');
  s67id('s953detailbody').innerHTML=data.length?data.map(x=>`<tr><td>${h(x.tanggal)}</td><td>${h(x.uraian_kegiatan)}</td><td>${h(x.output_kegiatan)}</td><td>${h(x.volume)}</td><td>${h(x.satuan)}</td><td>${h(x.bukti_kegiatan)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">Belum ada kegiatan di periode ini.</td></tr>';
+ s953printData={profile:p,month,rows:data};s67id('s953printone').disabled=false;
  s67id('s953detailstatus').textContent=`${data.length} kegiatan • ${month} • baca-saja`;
  pane.scrollIntoView({behavior:'smooth',block:'start'});
 }
