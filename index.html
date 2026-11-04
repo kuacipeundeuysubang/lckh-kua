@@ -187,7 +187,21 @@ body:has(#onlineGate:not([hidden])) #sikapApp{display:none!important}
  <p id="s95status" class="notice" role="status">Memuat data…</p>
  <div class="grid" style="margin:16px 0"><div class="stat"><small>Pegawai terdaftar</small><strong id="s95total">—</strong></div><div class="stat"><small>Pegawai aktif</small><strong id="s95active">—</strong></div><div class="stat"><small>Administrator KUA</small><strong id="s95admins">—</strong></div><div class="stat"><small>LCKH pegawai periode</small><strong id="s95entries">—</strong></div></div><p class="notice" id="s95secondary" style="margin:0 0 14px">Pegawai mengisi LCKH: —</p>
  <div class="panel"><div class="section-head"><h2>Rekap LCKH berdasarkan periode</h2><label class="field">Bulan <input type="month" id="s95month" style="padding:9px;border:1px solid #d5e1d9;border-radius:9px"></label></div><div class="sikap-table-tools"><input id="s95filter" placeholder="Cari nama, NIP, jabatan…"><select id="s95statusfilter"><option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak aktif</option></select><label>Baris <select id="s95size"><option>10</option><option>25</option><option>50</option></select></label></div><div class="tablewrap"><table><thead><tr><th>Nama pegawai</th><th>NIP/ID</th><th>Jabatan</th><th>Peran</th><th>Status</th><th>Jumlah LCKH</th><th>Hari kegiatan</th><th>Rincian</th></tr></thead><tbody id="s95body"><tr><td colspan="8" class="empty">Data belum dimuat.</td></tr></tbody></table></div><div id="s95paging" class="sikap-pages"></div></div>
- <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><div class="actions"><button type="button" class="btn" id="s953printone" disabled>⎙ Cetak LCKH</button><button type="button" class="btn alt s953-report-btn" data-s953-report="lckb" disabled>⎙ Cetak LCKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="rkb" disabled>⎙ Cetak RKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="wfo" disabled>⎙ Cetak WFO</button><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div></div><p class="notice" id="s953detailstatus"></p><div class="panel" style="padding:14px;margin:12px 0;background:#f5faf6" id="s953printSettings"><h3 style="margin:0 0 5px;font-size:15px">Identitas tanda tangan dan titimangsa cetak</h3><p class="muted mini" style="margin:0 0 12px">Khusus pratinjau Admin KUA. Isian ini hanya untuk cetak dan tidak mengubah profil atau LCKH pegawai.</p><div class="formgrid"><div class="field"><label>Nama atasan</label><input id="s953superName" placeholder="Nama pejabat penandatangan"></div><div class="field"><label>NIP atasan</label><input id="s953superNip" placeholder="NIP pejabat penandatangan"></div><div class="field"><label>Jabatan atasan</label><input id="s953superPosition" placeholder="Contoh: Kepala KUA Kecamatan Cipeundeuy"></div><div class="field"><label>Tempat penandatanganan</label><input id="s953signPlace" value="Cipeundeuy" placeholder="Cipeundeuy"></div><div class="field"><label>Tanggal penandatanganan</label><input type="date" id="s953signDate"></div></div><p class="muted mini" id="s953superSource"></p></div><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
+ <section class="panel" id="s95editIdentityPanel" hidden aria-label="Edit Identitas Pegawai" style="border:1px solid #bfd8c5;margin:14px 0;background:#f9fcfa">
+    <div class="section-head"><h2>Edit Identitas Pegawai</h2><span class="pill">Admin KUA • Profil saja</span></div>
+    <p class="info">Perubahan hanya pada identitas profil pegawai di KUA Anda. ID akun, email login, penempatan KUA, serta data LCKH tidak diubah. Riwayat cetak PDF yang sudah pernah disimpan tidak berubah.</p>
+    <form id="s95editIdentityForm">
+      <div class="formgrid">
+        <div class="field"><label>Nama lengkap *</label><input id="s95editName" required maxlength="160" autocomplete="off"></div>
+        <div class="field"><label>NIP/ID pegawai *</label><input id="s95editNip" required maxlength="24" inputmode="numeric" autocomplete="off"></div>
+        <div class="field"><label>Jabatan utama *</label><select id="s95editJob" required><option value="Penghulu">Penghulu</option><option value="Pengadministrasi Perkantoran">Pengadministrasi Perkantoran</option><option value="Penyuluh Agama Islam">Penyuluh Agama Islam</option><option value="PLO">PLO</option><option value="PUO">PUO</option><option value="Operator SIMKAH">Operator SIMKAH</option><option value="KEPALA">Kepala KUA</option></select></div>
+        <div class="field"><label>Unit kerja (tidak dapat dipindahkan di sini)</label><input id="s95editKua" disabled aria-readonly="true"></div>
+      </div>
+      <p id="s95editIdentityStatus" class="notice" role="status" aria-live="polite">Pilih tombol Edit Identitas pada pegawai.</p>
+      <div class="actions"><button class="btn" type="submit" id="s95editSave">Simpan Perubahan Identitas</button><button class="btn ghost" type="button" id="s95editCancel">Batal</button></div>
+    </form>
+  </section>
+  <div class="panel" id="s953detail" hidden><div class="section-head"><h2 id="s953detailtitle">Rincian kegiatan</h2><div class="actions"><button type="button" class="btn" id="s953printone" disabled>⎙ Cetak LCKH</button><button type="button" class="btn alt s953-report-btn" data-s953-report="lckb" disabled>⎙ Cetak LCKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="rkb" disabled>⎙ Cetak RKB</button><button type="button" class="btn alt s953-report-btn" data-s953-report="wfo" disabled>⎙ Cetak WFO</button><button type="button" class="btn ghost" id="s953close">Tutup rincian</button></div></div><p class="notice" id="s953detailstatus"></p><div class="panel" style="padding:14px;margin:12px 0;background:#f5faf6" id="s953printSettings"><h3 style="margin:0 0 5px;font-size:15px">Identitas tanda tangan dan titimangsa cetak</h3><p class="muted mini" style="margin:0 0 12px">Khusus pratinjau Admin KUA. Isian ini hanya untuk cetak dan tidak mengubah profil atau LCKH pegawai.</p><div class="formgrid"><div class="field"><label>Nama atasan</label><input id="s953superName" placeholder="Nama pejabat penandatangan"></div><div class="field"><label>NIP atasan</label><input id="s953superNip" placeholder="NIP pejabat penandatangan"></div><div class="field"><label>Jabatan atasan</label><input id="s953superPosition" placeholder="Contoh: Kepala KUA Kecamatan Cipeundeuy"></div><div class="field"><label>Tempat penandatanganan</label><input id="s953signPlace" value="Cipeundeuy" placeholder="Cipeundeuy"></div><div class="field"><label>Tanggal penandatanganan</label><input type="date" id="s953signDate"></div></div><p class="muted mini" id="s953superSource"></p></div><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Uraian kegiatan</th><th>Output</th><th>Volume</th><th>Satuan</th><th>Bukti kegiatan</th></tr></thead><tbody id="s953detailbody"></tbody></table></div></div>
  <p class="notice">Ringkasan pengawasan bersifat baca-saja. Batas tampilan: maksimal 1.000 pegawai dan 1.000 LCKH per periode. Jika terlampaui, tampilan memberi peringatan dan tidak menganggap hasil parsial sebagai total.</p>
  <section class="panel" id="sikapRangkapPanel" style="margin-top:18px">
  <h2>Penugasan Rangkap Pegawai</h2>
@@ -909,7 +923,7 @@ function s95renderRows(){
  const tbody=s67id('s95body'),q=(s67id('s95filter')?.value||'').trim().toLowerCase(),status=s67id('s95statusfilter')?.value||'all',size=Number(s67id('s95size')?.value||10);
  const rows=s95allProfiles.filter(p=>[p.nama,p.nip_id,p.jabatan].join(' ').toLowerCase().includes(q)&&(status==='all'||(status==='active'?!!p.aktif:!p.aktif)));
  const pages=Math.max(1,Math.ceil(rows.length/size));s95page=Math.min(s95page,pages);
- tbody.innerHTML=rows.length?rows.slice((s95page-1)*size,s95page*size).map(p=>{const a=s95counts.get(p.user_id),role=s953roles.get(p.user_id),label=role==='admin_kua'?'Admin KUA':role==='pegawai'?'Pegawai':role||'Belum dapat dibaca';return `<tr><td>${h(p.nama||'-')}</td><td>${h(p.nip_id||'-')}</td><td>${h(p.jabatan||'-')}</td><td>${h(label)}</td><td>${p.aktif?'Aktif':'Tidak aktif'}</td><td>${a?.count||0}</td><td>${a?.days.size||0}</td><td>${s953trusted&&role==='pegawai'?`<button type="button" class="tinybtn" data-s953-user="${h(p.user_id)}">Lihat LCKH</button>`:'—'}</td></tr>`}).join(''):'<tr><td colspan="8" class="empty">Tidak ada pegawai yang cocok.</td></tr>';
+ tbody.innerHTML=rows.length?rows.slice((s95page-1)*size,s95page*size).map(p=>{const a=s95counts.get(p.user_id),role=s953roles.get(p.user_id),label=role==='admin_kua'?'Admin KUA':role==='pegawai'?'Pegawai':role||'Belum dapat dibaca';return `<tr><td>${h(p.nama||'-')}</td><td>${h(p.nip_id||'-')}</td><td>${h(p.jabatan||'-')}</td><td>${h(label)}</td><td>${p.aktif?'Aktif':'Tidak aktif'}</td><td>${a?.count||0}</td><td>${a?.days.size||0}</td><td>${s953trusted&&role==='pegawai'?`<button type="button" class="tinybtn" data-s953-user="${h(p.user_id)}">Lihat LCKH</button> <button type="button" class="tinybtn" data-s95-edit-user="${h(p.user_id)}">Edit Identitas</button>`:'—'}</td></tr>`}).join(''):'<tr><td colspan="8" class="empty">Tidak ada pegawai yang cocok.</td></tr>';
  s67id('s95paging').innerHTML=`<span class="mini">${rows.length} pengguna · Halaman ${s95page}/${pages}</span><button type="button" data-s95-dir="-1" ${s95page===1?'disabled':''}>←</button><button type="button" data-s95-dir="1" ${s95page===pages?'disabled':''}>→</button>`;
 }
 let s95busy=false;
@@ -1443,4 +1457,62 @@ $('s96size').onchange=()=>{s96pages.clear();s96groupRender()};$('s96groups').add
 for(const id of ['s95filter','s95statusfilter','s95size'])$(id).addEventListener(id==='s95filter'?'input':'change',()=>{s95page=1;s95renderRows()});
 $('s95paging').onclick=e=>{const b=e.target.closest('[data-s95-dir]');if(b){s95page+=Number(b.dataset.s95Dir);s95renderRows();}};
 })();
-</script></body></html>
+</script><script id="sikap-admin-edit-identitas-2026">
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const form=$('s95editIdentityForm'), panel=$('s95editIdentityPanel');
+ if(!form||!panel)return;
+ let target=null,original=null,busy=false;
+ function close(){if(busy)return;panel.hidden=true;target=null;original=null;form.reset();$('s95editIdentityStatus').textContent='Pilih tombol Edit Identitas pada pegawai.';}
+ $('s95editCancel').addEventListener('click',close);
+ $('s95body').addEventListener('click',event=>{
+   const btn=event.target.closest('[data-s95-edit-user]');if(!btn)return;
+   const uid=btn.getAttribute('data-s95-edit-user');
+   const p=(typeof s953profiles!=='undefined'?s953profiles:[]).find(row=>row.user_id===uid);
+   const role=typeof s953roles!=='undefined'?s953roles.get(uid):null;
+   if(s95role!=='admin_kua'||!s953trusted||s953personal||role!=='pegawai'||!p||p.kua_id!==s67profile?.kua_id||uid===s67currentUser){alert('Hanya identitas pegawai dalam KUA yang sama dapat diedit.');return;}
+   target=uid;original={nama:p.nama||'',nip_id:p.nip_id||'',jabatan:p.jabatan||'',kua_id:p.kua_id};
+   $('s95editName').value=original.nama;
+   $('s95editNip').value=original.nip_id;
+   $('s95editJob').value=original.jabatan;
+   if($('s95editJob').value!==original.jabatan){
+     const option=new Option(original.jabatan+' (jabatan saat ini)',original.jabatan);
+     $('s95editJob').add(option);$('s95editJob').value=original.jabatan;
+   }
+   $('s95editKua').value=s67profile?.kuaNama||'KUA sesuai penempatan akun';
+   $('s95editIdentityStatus').textContent='Periksa ejaan nama, NIP dan jabatan sebelum menyimpan.';
+   panel.hidden=false;panel.scrollIntoView({behavior:'smooth',block:'start'});
+ });
+ form.addEventListener('submit',async e=>{
+   e.preventDefault();if(busy)return;
+   const nama=$('s95editName').value.trim().replace(/\s+/g,' ');
+   const nip_id=$('s95editNip').value.trim();
+   const jabatan=$('s95editJob').value;
+   const status=$('s95editIdentityStatus');
+   if(!nama||nama.length<2||!/^[0-9]{8,24}$/.test(nip_id)||!jabatan){status.textContent='Nama wajib diisi, NIP harus 8–24 digit angka, dan jabatan wajib dipilih.';return;}
+   if(!target||!original||s95role!=='admin_kua'||!s953trusted||s953personal||!s67client||!s67currentUser||original.kua_id!==s67profile?.kua_id){status.textContent='Sesi atau ruang lingkup KUA tidak valid. Muat ulang dahulu.';return;}
+   if(nama===original.nama&&nip_id===original.nip_id&&jabatan===original.jabatan){status.textContent='Tidak ada perubahan identitas.';return;}
+   if(!confirm('Ubah identitas pegawai dari "'+original.nama+'" menjadi "'+nama+'"?\nData LCKH dan ID akun tidak akan berubah.'))return;
+   busy=true;$('s95editSave').disabled=true;$('s95editCancel').disabled=true;status.textContent='Memverifikasi izin dan menyimpan profil…';
+   try{
+     const auth=await s67client.auth.getUser();
+     if(auth.error||auth.data?.user?.id!==s67currentUser)throw Error('Sesi Admin KUA tidak valid. Silakan login ulang.');
+     const check=await s67client.from('sikap_profil').select('user_id,kua_id,nama,nip_id,jabatan').eq('user_id',target).eq('kua_id',s67profile.kua_id).maybeSingle();
+     if(check.error)throw Error(check.error.message);
+     if(!check.data||check.data.kua_id!==original.kua_id)throw Error('Pegawai tidak ditemukan dalam KUA Anda.');
+     if(check.data.nama!==original.nama||check.data.nip_id!==original.nip_id||check.data.jabatan!==original.jabatan)throw Error('Data pegawai berubah sejak dibuka. Muat ulang sebelum mengedit.');
+     const res=await s67client.from('sikap_profil').update({nama,nip_id,jabatan}).eq('user_id',target).eq('kua_id',original.kua_id).eq('nama',original.nama).eq('nip_id',original.nip_id).eq('jabatan',original.jabatan).select('user_id,nama,nip_id,jabatan,kua_id');
+     if(res.error)throw Error(res.error.message);
+     if(!res.data||res.data.length!==1)throw Error('Perubahan tidak terkonfirmasi. Periksa kebijakan RLS dan izin UPDATE sikap_profil.');
+     status.textContent='Identitas berhasil diperbarui. Memuat ulang daftar pegawai…';
+     // Master profil laporan memiliki data tanda tangan terpisah; jangan ubah tanpa otorisasi.
+     target=null;original=null;
+     if(typeof s95load==='function')await s95load();
+     status.textContent='Berhasil. Identitas akun pegawai telah diperbarui; data LCKH tidak diubah. Jika nama pada laporan cetak masih lama, periksa profil laporan pegawai.';
+   }catch(error){status.textContent='Belum berhasil: '+(error?.message||String(error))+' Tidak ada data LCKH yang diedit.';}
+   finally{busy=false;$('s95editSave').disabled=false;$('s95editCancel').disabled=false;}
+ });
+})();
+</script>
+</body></html>
