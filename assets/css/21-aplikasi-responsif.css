@@ -1,0 +1,31 @@
+@media screen{
+.sikap-app-header{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#114c3c;color:white;border-bottom:3px solid #c7a65a;border-radius:16px;padding:16px 20px;margin-bottom:18px}
+.sikap-app-brand{display:flex;align-items:center;gap:12px;min-width:0}.sikap-app-brand img{width:48px;height:48px;border-radius:11px}.sikap-app-brand strong{display:block;font-size:26px;line-height:1.1;letter-spacing:.4px}.sikap-app-brand span{display:block;font-size:12px;margin-top:4px;color:#e3ede6}
+#sikapInstall{border:1px solid #ffffff55;border-radius:9px;background:#ffffff12;color:#fff;padding:9px 12px;min-height:42px;font-weight:700}
+.sikap-home-person{display:flex;align-items:center;gap:12px;width:100%;border:1px solid #e3eae5;background:#fff;text-align:left;border-radius:16px;padding:16px;color:#183e2b;margin-bottom:16px}.sikap-home-person>span:nth-child(2){flex:1;min-width:0}.sikap-home-person strong,.sikap-home-person small{display:block;overflow-wrap:anywhere}.sikap-home-person strong{font-size:18px}.sikap-home-person small{color:#6b7c71;font-size:12px;margin-top:3px}.sikap-home-person>span:last-child{font-size:26px;color:#718379}.sikap-home-avatar{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:50%;background:#edf4e9;color:#215d3c;font-weight:800;font-size:21px}
+.sikap-calendar-add{width:100%;margin-top:14px;min-height:47px;font-size:16px}
+.sikap-recent-card{border:1px solid #e3eae5!important;padding:14px!important;margin-top:10px;border-radius:12px;background:#fff;overflow-wrap:anywhere}.sikap-recent-card strong{display:block;font-size:13px;margin-bottom:6px}
+.sikap-network-status{background:#fff3d3;border-bottom:1px solid #dfca8d;color:#5c4511;text-align:center;font-size:12px;padding:10px 14px;position:sticky;top:0;z-index:90}
+@media(min-width:651px){.sikap-app-header{padding:12px 18px}.sikap-app-brand strong{font-size:22px}.sikap-app-brand img{width:40px;height:40px}.sikap-home-layout>.hero{display:none}}
+@media(max-width:650px){
+ #sikapApp .main{padding:0 12px calc(94px + env(safe-area-inset-bottom));background:#f7f8f6}
+ .sikap-app-header{margin:0 -12px 14px;border-radius:0;padding:16px 17px;padding-top:calc(16px + env(safe-area-inset-top))}
+ .sikap-app-brand strong{font-size:27px}.sikap-app-brand span{font-size:10px}.sikap-app-brand img{width:44px;height:44px}
+ #sikapInstall{font-size:11px;padding:8px 10px}
+ .top{padding:0 2px;margin:0 0 14px}.top small{display:none}.top h1{margin:0;font-size:20px}.top .userchip{font-size:11px}
+ body:has(.sikap-home-layout) #sikapApp .top{display:none}
+ .sikap-home-layout{gap:14px}.sikap-home-layout>.hero,.sikap-home-layout>.sikap-home-stats{display:none}
+ .sikap-home-person{order:-1;margin:0;padding:13px 14px}
+ .sikap-home-layout .sikap-calendar-panel{padding:16px 12px;border-radius:18px}
+ .sikap-calendar-panel h2{font-size:18px}.sikap-calendar-summary span{background:#eef5e9}.sikap-calendar-summary span:last-child{background:#fff0f0}.sikap-calendar-day{min-height:46px;border-radius:5px}.sikap-calendar-day.filled{background:#e0f3d9;border-color:#d9edcf}.sikap-calendar-day.empty{background:#ffe9e8}.sikap-calendar-day.is-today{border:2px solid #165a39}.sikap-calendar-day small{font-size:9px}
+ .sikap-home-layout .sikap-home-recent{background:transparent;border:0;box-shadow:none;padding:2px 0}
+ .sikap-home-recent .section-head{padding:0 4px}.sikap-home-recent .section-head h2{font-size:19px}
+ .footnav{padding-bottom:max(8px,env(safe-area-inset-bottom));box-shadow:0 -3px 16px #143c2110}.footnav button{min-height:55px;font-size:10px}.footnav b{font-size:23px}
+ .sikap-history-cards .tablewrap{overflow:visible;border:0;background:transparent}
+ .sikap-history-cards table,.sikap-history-cards tbody{display:block;min-width:0!important;width:100%}
+ .sikap-history-cards thead{display:none}.sikap-history-cards tbody tr{display:block;border:1px solid #deeadf;border-radius:13px;margin:10px 8px;padding:12px;background:white}
+ .sikap-history-cards td{display:block;border:0!important;padding:4px 0!important;max-width:none!important;white-space:normal;overflow-wrap:anywhere}
+ .sikap-history-cards td[data-label="Tanggal"]{font-size:11px;color:#6b7f70}.sikap-history-cards td[data-label="Output"]::before{content:'Output: ';font-weight:600;color:#486b55}.sikap-history-cards td[data-label="Volume"]{font-weight:700;color:#175d39}.sikap-history-cards td[data-label="Aksi"]{padding-top:10px!important}.sikap-history-cards .tinybtn{min-height:38px;padding:8px 15px}
+}
+}
+@media print{.sikap-app-header,.sikap-home-person,.sikap-network-status,.sikap-calendar-add{display:none!important}}

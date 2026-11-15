@@ -52,3 +52,21 @@ Isian tautan bukti dihapus. Jenis bukti dukung tetap tersedia. Referensi lama di
 Logo dokumen, huruf S dan centang emas diterapkan pada login, sidebar, favicon, dan ikon Apple. Berkas asli serta ukuran web berada di `assets/images/sikap-*`. Desain dibuat dengan ImageGen; aset web diperkecil dari hasil asli. Setelah unggah, muat ulang Ctrl+F5 agar ikon baru terlihat.
 
 Logo terkini menggunakan buku terbuka dengan centang emas, menggantikan logo dokumen-S sebelumnya. Tulisan pendamping: SIKAP — Kegiatan dan Pelaporan KUA.
+
+## Versi aplikasi dan web responsif
+
+Paket yang sama melayani browser desktop dan ponsel serta dapat dipasang sebagai PWA. Aplikasi menggunakan akun dan database SIKAP yang sama; bukan APK Android atau aplikasi App Store.
+
+### Pemasangan
+
+1. Unggah seluruh isi paket ke folder publikasi GitHub Pages yang sama dengan sebelumnya. `manifest.webmanifest` dan `sw.js` harus berada di samping `index.html`.
+2. Buka website melalui HTTPS.
+3. Android/Chrome: tekan Pasang di header, atau gunakan menu browser → Instal aplikasi/Tambahkan ke layar utama.
+4. iPhone/Safari: Bagikan → Tambahkan ke Layar Utama.
+5. Komputer: gunakan tombol Pasang jika didukung browser.
+
+Nama menu dapat berbeda menurut browser. PWA tetap membutuhkan internet untuk login, mengambil data dan menyimpan LCKH. Cache hanya berkas tampilan statis milik website, bukan respons API atau catatan pegawai. Jika tidak ada koneksi, aplikasi menampilkan pemberitahuan. Jangan menganggap tampilan shell offline sebagai bukti data terbaru.
+
+Beranda menggunakan data pegawai sebenarnya, kalender langsung terlihat, kartu kegiatan terbaru dan tombol Isi LCKH. Riwayat berubah menjadi kartu pada ponsel dan tetap tabel pada desktop. Tidak ada foto atau angka contoh dari mockup yang dimasukkan.
+
+Pemeriksaan lokal mencakup sintaks, manifest, ukuran ikon, referensi aset dan lingkup cache. Instalasi pada perangkat, login langsung, dan hasil visual perlu diperiksa setelah deployment HTTPS.
