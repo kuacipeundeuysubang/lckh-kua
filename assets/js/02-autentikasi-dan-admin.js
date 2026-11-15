@@ -177,10 +177,9 @@ submitEntry=async function(event){
    output:manual?V('foutput').trim():(old?V('foutput').trim():m?.output),
    evidence:V('fevidence').trim(),
    volume:Number(V('fvolume')),unit:sikapNilaiSatuan(),
-   note:V('fnote').trim(),link:V('flink').trim()
+   note:V('fnote').trim(),link:old?.link||''
  };
  if(e.code && (SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){const mapped=sikapKelompok888(e.code,e.category);e.code=mapped.code;e.category=mapped.category;e.service=mapped.service;}
- if(e.link&&!sikapValidEvidenceURL(e.link)){alert('Tautan bukti harus berupa alamat lengkap http:// atau https://.');E('flink')?.focus();return;}
  const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
  const validFungsi=Boolean(!e.code&&FUNCTIONS9[e.category]&&e.category!=='I');
  if(!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}

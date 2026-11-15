@@ -4,7 +4,6 @@ function sikapValidEntryDate(value){
  const d=new Date(value+'T12:00:00');
  return !Number.isNaN(d.getTime())&&d.getFullYear()===Number(value.slice(0,4))&&d.getMonth()+1===Number(value.slice(5,7))&&d.getDate()===Number(value.slice(8,10));
 }
-function sikapValidEvidenceURL(value){try{return ['https:','http:'].includes(new URL(value).protocol);}catch{return false;}}
 let sikapEntryNextDate='';
 const sikapEntryBase=entry;
 entry=function(){
@@ -15,12 +14,9 @@ entry=function(){
  const notes=E('fnote')?.closest('.field');
  if(!E('fevidence')){
   const field=document.createElement('div');field.className='field full';
-  field.innerHTML='<label for="fevidence">Jenis bukti dukung</label><input id="fevidence" maxlength="1500" placeholder="Contoh: daftar hadir, notulen, dokumentasi foto"><small class="muted">Periksa jenis bukti yang benar-benar tersedia.</small>';
+  field.innerHTML='<label for="fevidence">Jenis bukti dukung</label><input id="fevidence" maxlength="1500" placeholder="Contoh: daftar hadir, notulen, dokumentasi foto">';
   notes?.before(field);E('fevidence').value=state.selected?.evidence||draft?.evidence||'';
  }
- const field=document.createElement('div');field.className='field full';
- field.innerHTML='<label for="flink">Tautan bukti dukung (opsional)</label><input id="flink" type="url" inputmode="url" maxlength="4000" placeholder="https://…" autocomplete="off"><small class="muted">Tempel tautan dokumen atau folder bukti. Pengaturan akses tetap mengikuti penyimpanan asal.</small>';
- notes?.before(field);E('flink').value=saved?.link||draft?.link||'';
  form.querySelectorAll('.field').forEach(field=>{const label=field.querySelector('label');const input=field.querySelector('input[id],textarea[id],select[id]');if(label&&input&&!label.htmlFor)label.htmlFor=input.id;});
 };
 const sikapEntryPickBase=pick;
@@ -36,6 +32,6 @@ function sikapEntryContinue(date){
 function sikapEntrySaved(date,edited){
  const box=document.createElement('section');box.className='panel sikap-entry-success';box.setAttribute('role','status');
  const text=document.createElement('strong');text.textContent=edited?'✓ Perubahan LCKH berhasil disimpan.':'✓ LCKH berhasil disimpan.';box.appendChild(text);
- const description=document.createElement('p');description.className='muted mini';description.textContent='Tanggal '+dd(date)+'. Data sudah dimuat kembali ke Riwayat.';box.appendChild(description);
+ const description=document.createElement('p');description.className='muted mini';description.textContent='Tanggal '+dd(date);box.appendChild(description);
  const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='＋ Tambah kegiatan pada tanggal yang sama';button.onclick=()=>sikapEntryContinue(date);box.appendChild(button);E('content').prepend(box);toast('LCKH berhasil disimpan');
 }

@@ -1,0 +1,23 @@
+/* Dashboard ringkas: warna hijau, jarak konsisten, kontrol ramah sentuh. */
+@media screen{
+.panel,.stat{box-shadow:0 3px 14px #19352e07}
+.panel h2{letter-spacing:0;font-weight:700}
+#lckhForm{max-width:920px;margin-inline:auto}
+#lckhForm .formgrid{gap:18px}
+#lckhForm .field>label{font-size:13px;margin-bottom:7px}
+#lckhForm input,#lckhForm select,#lckhForm textarea{min-height:46px}
+#lckhForm textarea{line-height:1.6}
+#lckhForm .autofill{padding:16px;background:#f7faf8}
+#lckhForm .autofill p:last-child{margin-bottom:0}
+#lckhForm .result{max-height:260px}
+#lckhForm .result button{padding:13px 14px}
+@media(max-width:650px){
+ #lckhForm .formgrid{grid-template-columns:minmax(0,1fr);gap:16px}
+ #lckhForm input,#lckhForm select,#lckhForm textarea{font-size:16px}
+ #lckhForm .full.actions{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px;padding-top:8px;border-top:1px solid #e2ebe5}
+ #lckhForm .full.actions .btn{padding:12px 8px}
+ #lckhForm .sikap-helper{margin-top:0}
+ .top h1{font-size:21px}.top small{font-size:10px}
+ .nav button,.footnav button{touch-action:manipulation}
+}
+}

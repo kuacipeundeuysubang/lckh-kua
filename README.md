@@ -42,3 +42,7 @@ Periksa login, kalender ponsel, simpan/edit LCKH, cetak LCKB dari akun pegawai d
 ## Pembaruan formulir LCKH
 
 Tambahan modul `08-formulir-lckh.js` dan stylesheet `18-formulir-lckh.css`: pencarian langsung terbuka, bukti dan tautan terpisah, satuan mengikuti master saat dipilih, tanggal edit dan identitas historis dipertahankan, indikator menyimpan, serta tombol tambah pada tanggal yang sama setelah data berhasil dimuat ulang. Tautan hanya menerima HTTP/HTTPS. Bukti tetap opsional dan tidak dibuat otomatis sebagai dokumen. RKB +1 tetap dipertahankan.
+
+## Pembaruan tampilan ringkas
+
+Isian tautan bukti dihapus. Jenis bukti dukung tetap tersedia. Referensi lama di database dipertahankan saat edit, tetapi tidak ditampilkan dalam rekap LCKB. Teks bantuan berulang pada formulir dan beranda dipersingkat. Stylesheet `19-template-ringkas.css` merapikan formulir satu kolom, ukuran sentuh, dan ukuran teks ponsel.
