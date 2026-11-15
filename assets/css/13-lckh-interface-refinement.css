@@ -1,0 +1,78 @@
+
+/* Penyempurnaan antarmuka LCKH: khusus layar, format cetak tetap terpisah. */
+@media screen {
+:root{--lckh-border:#dce7df;--lckh-green:#176947}
+body{line-height:1.5}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+button:disabled{transform:none!important}
+textarea{resize:vertical;min-height:104px}
+input,select,textarea{max-width:100%}
+input[type=checkbox],input[type=radio]{accent-color:var(--lckh-green)}
+.main,.field,.panel,.section-head>div,.twocol>*{min-width:0}
+.top{gap:16px}.top h1{line-height:1.25}
+.panel h2{line-height:1.4}
+.section-head{flex-wrap:wrap;row-gap:12px}
+.actions{align-items:center}.actions .btn{line-height:1.4}
+.field label{line-height:1.5}
+.field :is(input,select,textarea):disabled{background:#f2f5f3;color:#63756b;opacity:1}
+.field input[readonly]{background:#f5f8f6}
+.notice,.info,.mg-note,.autofill,.result button{overflow-wrap:anywhere}
+.notice{line-height:1.7}
+.tablewrap{max-width:100%;border:1px solid var(--lckh-border);border-radius:12px;overscroll-behavior-x:contain}
+.tablewrap th{font-size:12px;line-height:1.5;font-weight:700;padding:13px 12px}
+.tablewrap td{font-size:13px;padding:13px 12px;overflow-wrap:anywhere;max-width:460px}
+.tablewrap tbody tr:last-child td{border-bottom:0}
+.tablewrap tbody tr:hover{background:#f8fbf9}
+.tablewrap td .tinybtn{margin:2px 0;min-height:34px}
+.toolbar input,.toolbar select,.sikap-table-tools input,.sikap-table-tools select{min-height:42px;background:#fff;color:#254d39}
+.sikap-table-tools label{display:flex;align-items:center;gap:7px;font-size:12px;color:#546e5e}
+.sikap-pages button{min-height:38px;color:#22583e}
+.sikap-dash-tabs button{min-height:44px}
+#onlineGate{max-width:580px;margin:clamp(28px,8vh,86px) auto;padding:36px;border-radius:24px;box-shadow:0 18px 60px #183e2910}
+.sikap-login-heading{align-items:center}
+.sikap-login-mark{background:#edf6ef;box-shadow:none;flex-shrink:0}
+#onlineGate .sikap-login-heading h1{font-size:26px;letter-spacing:-.7px}
+.sikap-login-subtitle{font-size:14px;line-height:1.75}
+.sikap-online-msg:empty{display:none}
+#s67login{border-radius:12px;box-shadow:0 5px 14px #17694718}
+#s67loginarea input{border-radius:11px}
+#s67loginarea input:focus-visible{outline:2px solid #238653!important;outline-offset:2px}
+#onlineBar:not([hidden]){background:#f4f9f5;border-color:#dce7df;padding:10px 24px;gap:10px;color:#44614f}
+#onlineBar strong{color:#245e40;font-size:11px;letter-spacing:.3px}
+#onlineBar #s67identity{margin-right:auto;overflow-wrap:anywhere}
+#onlineBar button{min-height:38px;border:1px solid #d4e4d8;border-radius:9px;background:#fff;color:#205c3e}
+#s67logout{color:#923d36!important}
+#s95admin,#s96super,#sikapManageAccounts{width:calc(100% - 48px);border-color:var(--lckh-border);border-radius:20px;padding:26px;box-shadow:0 8px 32px #153f2310}
+#sikapManageAccounts .mg-grid{gap:16px}
+#sikapManageAccounts h2{margin-top:0;font-size:19px}
+#sikapManageAccounts :is(input,select){min-height:44px;border-radius:11px}
+.sidebar{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#50816a transparent}
+.sidefoot{padding-top:18px;margin-top:auto}
+.result button{line-height:1.6}.result button small{display:block;margin-top:4px}
+.toast{max-width:min(440px,calc(100vw - 32px));line-height:1.5}
+@media(max-width:1050px) and (min-width:651px){.sidebar{width:210px}.main{padding:24px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}}
+@media(max-width:650px){
+ #onlineGate{width:calc(100% - 28px);margin:28px 14px!important;padding:26px 22px!important}
+ #onlineGate .sikap-login-heading h1{font-size:23px}
+ .sikap-login-eyebrow{line-height:1.6}
+ #s95admin,#s96super,#sikapManageAccounts{width:calc(100% - 24px);margin:18px 12px!important;padding:18px;border-radius:17px}
+ #s95admin .grid,#s96super .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .grid .stat small{line-height:1.45}
+ .section-head>.actions{width:100%}
+ .section-head .actions>.btn{flex:1 1 135px}
+ .mode{gap:8px}.mode button{min-width:0;white-space:normal}
+ .toolbar{align-items:stretch}.toolbar .btn{flex:1 1 135px}
+ .sikap-table-tools{align-items:stretch}.sikap-table-tools input{min-width:0;flex-basis:100%}
+ .sikap-table-tools select{min-width:0}
+ .formgrid{gap:16px}
+ .sikap-history-toggle{align-items:flex-start;flex-wrap:wrap}
+ .footnav button{min-height:54px}.footnav b{line-height:1.1}
+ .toast{bottom:calc(83px + env(safe-area-inset-bottom));left:16px;right:auto}
+ #onlineBar:not([hidden]){gap:7px;flex-wrap:wrap}
+ #onlineBar button{font-size:11px}
+ .top .userchip{max-width:128px;flex-shrink:0}
+ .hero h2{overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+}

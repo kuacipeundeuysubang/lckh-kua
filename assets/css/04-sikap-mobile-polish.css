@@ -1,0 +1,32 @@
+
+/* Mobile SIKAP: jangan tampilkan navigasi sebelum login / setelah logout. */
+body:has(#onlineGate:not([hidden])) #footnav{display:none!important}
+body:has(#onlineGate:not([hidden])) #sikapApp{display:none!important}
+#onlineBar{position:static!important}
+#sikapApp .sidebar{top:0;height:100vh}
+.sikap-login-heading{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.sikap-login-mark{display:grid;place-items:center;flex:0 0 56px;height:56px;border-radius:17px;background:linear-gradient(145deg,#146747,#2d9669);color:white;font-size:32px;box-shadow:0 10px 24px #174c3622}
+.sikap-login-eyebrow{font-weight:800;letter-spacing:1.15px;font-size:10px;color:#307553}
+#onlineGate .sikap-login-heading h1{font-size:27px;line-height:1.2;margin:5px 0 0;color:#154b37}
+.sikap-login-subtitle{margin:0 0 22px;color:#5a7365}
+#s67loginarea .sikap-online-form{gap:11px}
+#s67loginarea .sikap-online-form label{margin-top:5px;color:#254d3a}
+#s67loginarea #s67email,#s67loginarea #s67password{font-size:16px;min-height:48px;background:#fbfdfb}
+.sikap-password-wrap{position:relative}
+#s67loginarea .sikap-password-wrap #s67password{padding-right:60px;margin-top:0}
+#s67loginarea .sikap-password-toggle{position:absolute;top:50%;right:7px;transform:translateY(-50%);width:43px;height:41px;padding:0;display:grid;place-items:center;border:0;border-radius:9px;background:transparent;color:#38634f;cursor:pointer}
+#s67loginarea .sikap-password-toggle:hover,#s67loginarea .sikap-password-toggle:focus-visible{background:#eaf4ec}
+#s67login{min-height:49px;margin-top:10px;font-size:16px}
+@media(max-width:650px){
+ #onlineGate{margin:20px 12px 35px!important;padding:26px 22px!important;border-radius:22px!important}
+ .sikap-login-heading{align-items:flex-start;gap:12px}
+ .sikap-login-mark{flex-basis:46px;height:46px;border-radius:13px;font-size:27px}
+ #onlineGate .sikap-login-heading h1{font-size:23px}
+ .sikap-login-eyebrow{font-size:9px;letter-spacing:.6px}
+ #onlineBar:not([hidden]){padding:9px 12px!important;gap:8px;justify-content:space-between;background:#f5faf6;border-color:#d7e8db}
+ #onlineBar #s67identity{display:none!important}
+ #onlineBar strong{font-size:12px;color:#155d42}
+ #onlineBar button{font-size:12px;padding:8px 9px;white-space:nowrap}
+ #sikapApp .main{padding-top:14px}
+}
+@media print{#footnav,#onlineBar,#onlineGate{display:none!important}}

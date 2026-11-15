@@ -1,0 +1,38 @@
+
+@media screen{
+.sikap-calendar-intro{margin:-5px 0 14px;color:#6a7e71;font-size:12px;line-height:1.5}
+.sikap-calendar-panel .section-head{margin-bottom:10px}
+.sikap-calendar-day.is-today{border:2px solid #166c42;position:relative}
+.sikap-calendar-day.is-today strong{text-decoration:underline;text-underline-offset:3px}
+.sikap-calendar-day:focus-visible{outline:3px solid #238653;outline-offset:2px}
+.sikap-calendar-day.filled small{font-weight:700;color:#126039}
+.sikap-calendar-day.empty small{font-weight:700;color:#a13d36}
+@media(max-width:650px){
+ .sikap-home-layout{display:flex;flex-direction:column;gap:14px}
+ .sikap-home-layout>.sikap-home-panels{display:contents}
+ .sikap-home-layout .sikap-calendar-panel{order:0;margin:0;padding:15px 12px;border-radius:17px;box-shadow:0 5px 20px #143c2108}
+ .sikap-home-layout>.hero{order:1;padding:18px}
+ .sikap-home-layout>.hero h2{font-size:19px;margin:10px 0 6px}
+ .sikap-home-layout>.hero p{font-size:12px}
+ .sikap-home-layout>.hero .btn{margin-top:13px;min-height:44px}
+ .sikap-home-layout>.sikap-home-stats{order:2;margin-top:0!important}
+ .sikap-home-layout .sikap-home-recent{order:3;margin-top:0}
+ .sikap-calendar-panel .section-head{flex-wrap:nowrap;gap:8px;margin-bottom:8px}
+ .sikap-calendar-panel h2{font-size:17px}
+ .sikap-calendar-panel .tinybtn{min-height:34px}
+ .sikap-calendar-intro{font-size:11px;margin:0 0 10px}
+ .sikap-calendar-toolbar{margin-bottom:8px;gap:6px}
+ .sikap-calendar-toolbar input{max-width:none;font-size:14px;min-height:38px;padding:7px 9px}
+ .sikap-calendar-month{font-size:14px;margin-bottom:8px;text-transform:capitalize}
+ .sikap-calendar-summary{gap:5px;margin-bottom:9px}
+ .sikap-calendar-summary span{padding:7px 3px;font-size:10px;line-height:1.4}
+ .sikap-calendar-summary b{display:block;font-size:19px;line-height:1.2;margin-bottom:2px}
+ .sikap-calendar-grid{gap:4px}
+ .sikap-calendar-weekday{font-size:10px;padding:4px 0}
+ .sikap-calendar-day{min-height:44px;border-radius:8px;gap:2px;padding:4px 0}
+ .sikap-calendar-day strong{font-size:13px;line-height:1.25}
+ .sikap-calendar-day small{font-size:8px;line-height:1.25}
+ .sikap-calendar-legend{gap:5px 10px;font-size:10px;margin-top:10px}
+ .sikap-calendar-note{font-size:10px;line-height:1.45;margin-top:7px}
+}
+}

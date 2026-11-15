@@ -1,0 +1,5 @@
+
+/* LCKB: jumlah dan satuan volume tetap pada satu baris, termasuk saat dicetak. */
+.report-table.sikap-lckb-table th:nth-child(3),
+.report-table.sikap-lckb-table td:nth-child(3){white-space:nowrap!important;min-width:118px;text-align:center;}
+@media print{.report-table.sikap-lckb-table th:nth-child(3),.report-table.sikap-lckb-table td:nth-child(3){min-width:95px;white-space:nowrap!important;}}

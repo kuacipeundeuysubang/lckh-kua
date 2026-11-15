@@ -1,0 +1,6 @@
+
+/* Panel pembuatan akun hanya untuk dashboard administrasi, bukan LCKH Saya. */
+@media screen {
+ body:has(#sikapApp[style*="display: flex"]) #sikapManageAccounts {display:none!important}
+}
+@media print {#sikapManageAccounts{display:none!important}}

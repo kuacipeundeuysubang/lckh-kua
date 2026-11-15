@@ -1,0 +1,26 @@
+
+.sikap-home-panels{grid-template-columns:1.1fr 1fr}
+.sikap-calendar-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sikap-calendar-toolbar button{font-size:20px;min-width:38px}
+.sikap-calendar-toolbar input{flex:1;min-width:0;max-width:260px;padding:9px;border:1px solid #d5e3d7;border-radius:9px;color:#17492f}
+.sikap-calendar-month{text-align:center;font-weight:800;margin-bottom:12px;color:#164d36}
+.sikap-calendar-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:13px}
+.sikap-calendar-summary span{background:#f2f8f3;padding:10px 5px;text-align:center;font-size:11px;border-radius:9px;color:#486352}
+.sikap-calendar-summary b{font-size:17px;color:#145d3a}
+.sikap-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.sikap-calendar-weekday{text-align:center;font-size:11px;font-weight:700;color:#6b8072;padding:7px 0}
+.sikap-calendar-day{min-width:0;min-height:57px;border:1px solid #e2eae2;border-radius:9px;background:white;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;color:#214d36;padding:4px 1px}
+.sikap-calendar-day strong{font-size:14px}.sikap-calendar-day small{font-size:9px;white-space:nowrap}
+.sikap-calendar-day.filled{background:#e8f6ec;border-color:#b4dbbd;color:#15683e}
+.sikap-calendar-day.empty{background:#fff0ef;border-color:#f3d2ce;color:#a13d36}
+.sikap-calendar-day.weekend,.sikap-calendar-day.future{background:#f4f6f4;color:#88978c}
+.sikap-calendar-day.selected{outline:2px solid #197b4b;outline-offset:1px}
+.sikap-calendar-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:11px}
+.sikap-calendar-note{font-size:10px;margin:9px 0 0}
+.sikap-calendar-detail{border:1px solid #d7e9dc;border-radius:12px;padding:13px;margin-top:14px;background:#fafdfa}
+.sikap-calendar-detail .section-head{align-items:flex-start}.sikap-calendar-detail ol{padding-left:20px;max-height:220px;overflow:auto}
+.sikap-calendar-detail li{padding:7px 0;border-bottom:1px solid #e7eee9;font-size:12px;overflow-wrap:anywhere}
+.sikap-calendar-detail li small{color:#698173}
+@media(max-width:900px){.sikap-home-panels{grid-template-columns:1fr}}
+@media(max-width:650px){.sikap-calendar-day{min-height:49px}.sikap-calendar-day strong{font-size:12px}.sikap-calendar-day small{font-size:8px}.sikap-calendar-grid{gap:3px}}
+@media print{.sikap-calendar-panel{display:none!important}}
