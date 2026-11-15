@@ -74,3 +74,11 @@ Pemeriksaan lokal mencakup sintaks, manifest, ukuran ikon, referensi aset dan li
 ## Pembaruan ikon dan kalender
 
 Ikon navigasi sekarang SVG garis, menggantikan karakter simbol lama. Kalender menggunakan kotak tanggal menyatu, ringkasan bergambar, serta legenda titik. Modul `10-ikon-dan-kalender.js` dan CSS `22-ikon-dan-kalender.css` harus diunggah bersama index terbaru. Cache PWA dinaikkan ke v2. Tutup seluruh jendela/tab aplikasi lalu buka lagi setelah deployment.
+
+## Profil dan perbaikan legenda
+
+Titik legenda Belum direset agar tidak mewarisi padding .empty. Nama pada header setiap halaman dihilangkan; nama pegawai tampil di kartu identitas beranda. Pengaturan foto tersedia pada Profil: pilih JPG/PNG/WebP maksimal 5 MB, gambar dipotong tengah menjadi avatar 256 px. Foto disimpan lokal di browser, dipisahkan per ID akun, bukan di database atau lintas perangkat. Hapus data browser berarti foto lokal ikut hilang. Cache PWA v3.
+
+## Header menyatu
+
+Baris identitas akun di atas dihilangkan dari tampilan. Tombol Muat Ulang dan Keluar asli dipindahkan ke header hijau yang sama, sehingga handler dan pengamanan tetap berjalan. Header bersama tampil setelah login, termasuk pada dashboard Admin KUA/Super Admin; tersembunyi pada halaman login. Tidak ada perubahan sesi, akun atau data. Cache PWA v4.

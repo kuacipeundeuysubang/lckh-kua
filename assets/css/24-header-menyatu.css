@@ -1,0 +1,21 @@
+@media screen{
+.sikap-global-header{display:none!important;width:100%;margin:0!important;border-radius:0!important;padding:14px 24px!important;box-sizing:border-box;box-shadow:none;gap:16px;align-items:center;justify-content:space-between}
+.sikap-global-header:has(#onlineBar:not([hidden])){display:flex!important}
+.sikap-header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.sikap-global-header #onlineBar{position:static!important;top:auto!important;border:0!important;background:transparent!important;padding:0!important;margin:0!important;gap:8px!important;box-shadow:none;font-size:12px}
+.sikap-global-header #onlineBar[hidden]{display:none!important}
+.sikap-global-header #onlineBar:not([hidden]){display:flex!important}
+.sikap-global-header #s67identity,.sikap-global-header #onlineBar>strong{display:none!important}
+.sikap-global-header #onlineBar button,.sikap-global-header #sikapInstall{border:1px solid #ffffff55!important;background:#ffffff10!important;color:#fff!important;border-radius:9px;padding:9px 12px!important;font-size:12px;min-height:39px;white-space:nowrap}
+.sikap-global-header #s67logout{color:#fff!important}
+.sikap-global-header #onlineBar button:hover,.sikap-global-header #sikapInstall:hover{background:#ffffff25!important}
+@media(max-width:650px){
+ .sikap-global-header{padding:14px 12px!important;padding-top:calc(14px + env(safe-area-inset-top))!important;gap:10px;flex-wrap:wrap}
+ .sikap-global-header .sikap-app-brand{flex:1;min-width:170px;gap:9px}.sikap-global-header .sikap-app-brand img{width:38px;height:38px}.sikap-global-header .sikap-app-brand strong{font-size:23px}.sikap-global-header .sikap-app-brand span{font-size:9px}
+ .sikap-header-actions{gap:5px;margin-left:auto}.sikap-global-header #onlineBar{gap:5px!important}
+ .sikap-global-header #onlineBar button,.sikap-global-header #sikapInstall{font-size:10px;min-height:34px;padding:7px 8px!important}
+ #sikapApp .main{padding-top:14px}
+}
+@media(max-width:420px){.sikap-global-header .sikap-header-actions{width:100%;justify-content:flex-end}.sikap-global-header .sikap-app-brand{width:100%}}
+}
+@media print{.sikap-global-header{display:none!important}}
