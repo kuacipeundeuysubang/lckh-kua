@@ -175,15 +175,16 @@ submitEntry=async function(event){
    service:manual?FUNCTIONS9[V('fcategory')]:(old?.service||m?.service),
    detail:manual?V('fdetail').trim():(old?.detail||m?.detail),
    output:manual?V('foutput').trim():(old?V('foutput').trim():m?.output),
-   evidence:manual?V('fevidence').trim():(old?V('fevidence').trim():(m?.evidence||'')),
+   evidence:V('fevidence').trim(),
    volume:Number(V('fvolume')),unit:sikapNilaiSatuan(),
-   note:V('fnote').trim(),link:old?.link||state.copyDraft?.link||''
+   note:V('fnote').trim(),link:V('flink').trim()
  };
  if(e.code && (SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){const mapped=sikapKelompok888(e.code,e.category);e.code=mapped.code;e.category=mapped.category;e.service=mapped.service;}
+ if(e.link&&!sikapValidEvidenceURL(e.link)){alert('Tautan bukti harus berupa alamat lengkap http:// atau https://.');E('flink')?.focus();return;}
  const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
  const validFungsi=Boolean(!e.code&&FUNCTIONS9[e.category]&&e.category!=='I');
  if(!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
- if(!/^\d{4}-\d{2}-\d{2}$/.test(e.date)){alert('Tanggal pelaksanaan tidak valid.');return;}
+ if(!sikapValidEntryDate(e.date)){alert('Tanggal pelaksanaan tidak valid.');return;}
  if(!e.role||!e.detail||!e.output){alert('Jabatan, uraian, atau output belum lengkap.');return;}
  if(!e.unit){alert('Pilih satuan, atau isi satuan manual jika memilih Lainnya.');return;}
  if(!Number.isFinite(e.volume)||e.volume<=0){alert('Isi volume realisasi lebih dari nol.');return;}
@@ -194,7 +195,7 @@ submitEntry=async function(event){
  const mode=old?'UPDATE':'INSERT';
  if(!confirm('Simpan '+(old?'perubahan':'kegiatan')+' LCKH sebagai '+(s67profile.nama||'Pegawai')+'?\n\n'+e.date+' • '+e.detail+' • '+e.volume+' '+e.unit))return;
  sikap77saving=true;
- const submit=document.querySelector('#lckhForm button[type="submit"]');if(submit)submit.disabled=true;
+ const submit=document.querySelector('#lckhForm button[type="submit"]');const submitLabel=submit?.textContent;if(submit){submit.disabled=true;submit.textContent='Menyimpan…';}
  try{
    const {data:userRes,error:userErr}=await s67client.auth.getUser();
    if(userErr||userRes?.user?.id!==s67currentUser)throw Error('Identitas sesi tidak sesuai; login ulang.');
@@ -218,10 +219,10 @@ submitEntry=async function(event){
    }
    const savedId=result.data[0].id;
    state.selected=null;state.editId=null;state.copyDraft=null;state.activityQuery='';state.mode='master';
-   try{await s67getRows();go('history');alert('LCKH berhasil disimpan. Data tersedia pada Riwayat.');}
+   try{await s67getRows();go('history');sikapEntrySaved(e.date,Boolean(old));}
    catch(reloadError){alert(mode+' berhasil (ID '+savedId+'), tetapi pemuatan ulang gagal: '+reloadError.message+'\nJangan ulangi penyimpanan. Gunakan Muat Ulang LCKH.');}
  }catch(err){alert(mode+' tidak terkonfirmasi: '+(err?.message||String(err))+'\nPeriksa Riwayat atau Supabase sebelum mencoba lagi.');}
- finally{sikap77saving=false;if(submit?.isConnected)submit.disabled=false;}
+ finally{sikap77saving=false;if(submit?.isConnected){submit.disabled=false;submit.textContent=submitLabel;}}
 };
 // Tahap 9.5.12: DELETE terbatas lingkungan KUA terdaftar, entri MASTER/MANUAL milik akun sendiri.
 // Pengamanan otoritatif: RLS pada public.sikap_lckh; filter user_id dan kua_id diterapkan juga di query.

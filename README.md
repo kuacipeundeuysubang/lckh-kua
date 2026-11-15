@@ -38,3 +38,7 @@ Urutan pemuatan JavaScript tetap sama. Sejumlah fungsi masih menggunakan variabe
 ## Pemeriksaan setelah dipasang
 
 Periksa login, kalender ponsel, simpan/edit LCKH, cetak LCKB dari akun pegawai dan admin, serta volume RKB +1. Paket telah diperiksa sintaks JavaScript dan keterhubungan aset lokal. Tampilan browser, login, dan koneksi database langsung belum diverifikasi di lingkungan pengujian ini. Supabase JS tetap dimuat dari CDN dan membutuhkan internet.
+
+## Pembaruan formulir LCKH
+
+Tambahan modul `08-formulir-lckh.js` dan stylesheet `18-formulir-lckh.css`: pencarian langsung terbuka, bukti dan tautan terpisah, satuan mengikuti master saat dipilih, tanggal edit dan identitas historis dipertahankan, indikator menyimpan, serta tombol tambah pada tanggal yang sama setelah data berhasil dimuat ulang. Tautan hanya menerima HTTP/HTTPS. Bukti tetap opsional dan tidak dibuat otomatis sebagai dokumen. RKB +1 tetap dipertahankan.
