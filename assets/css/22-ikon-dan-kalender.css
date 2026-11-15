@@ -1,0 +1,28 @@
+@media screen{
+.sikap-ui-icon{display:inline-block;width:24px;height:24px;flex-shrink:0;vertical-align:middle}
+.nav button>span{display:inline-flex;align-items:center;justify-content:center;width:24px}.nav .sikap-ui-icon{width:21px;height:21px}
+.footnav b{display:flex!important;justify-content:center;align-items:center;height:27px;margin-bottom:4px}.footnav .sikap-ui-icon{width:25px;height:25px}.footnav button.active{color:#095a3a;background:transparent}.footnav button.active .sikap-ui-icon{stroke-width:2.3}
+.sikap-calendar-panel .section-head h2{display:flex;align-items:center;gap:9px}.sikap-calendar-panel h2>.sikap-ui-icon{color:#a08328;width:25px;height:25px}
+.sikap-calendar-toolbar button{display:grid;place-items:center;width:40px;min-width:40px;height:40px;padding:7px;background:#f1f4f1;border:0}.sikap-calendar-toolbar .sikap-ui-icon{width:22px;height:22px}
+.sikap-calendar-toolbar input{background:#e7f1df;border:0!important;text-align:center;font-weight:750;font-size:16px;border-radius:12px;color:#16482e}
+.sikap-calendar-month{display:none}
+.sikap-calendar-summary>span{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 5px;background:#eff6e9;color:#16482e;text-align:left;border-radius:10px}
+.sikap-calendar-summary>span:last-child{background:#fff0f0;color:#9c3b3a}.sikap-calendar-summary .sikap-ui-icon{width:25px;height:25px}.sikap-calendar-summary b{font-size:25px!important;line-height:1.1;display:block;margin:0}.sikap-calendar-summary small{font-size:10px;display:block;line-height:1.5;font-weight:400}
+.sikap-calendar-grid{gap:0!important;overflow:hidden;border:1px solid #e0e6df;border-radius:12px;background:#e0e6df}
+.sikap-calendar-weekday{background:#eceeed;padding:8px 0;font-size:11px;color:#253b2f}
+.sikap-calendar-day,.sikap-calendar-blank{border:1px solid #fff!important;border-radius:0!important;min-height:53px;background:#fafbf9;min-width:0}
+.sikap-calendar-day{padding:5px 1px!important;gap:3px}.sikap-calendar-day strong{font-size:16px!important;color:#1a3827;line-height:1.2}.sikap-calendar-day small{font-size:9px!important;line-height:1.2}
+.sikap-calendar-day.filled{background:#e2f4da!important}.sikap-calendar-day.empty{background:#ffe5e5!important}.sikap-calendar-day.weekend{background:#eceeec!important}.sikap-calendar-day.future{background:#fafbf9!important}.sikap-calendar-day.weekend strong{color:#7c827d}
+.sikap-calendar-day.is-today{position:relative;outline:2px solid #165a39!important;outline-offset:-2px!important;border-radius:7px!important;z-index:1}.sikap-calendar-day.is-today strong{text-decoration:none}
+.sikap-calendar-day.selected{box-shadow:inset 0 0 0 2px #51765c;outline-offset:-2px}
+.sikap-calendar-legend{justify-content:center;gap:10px 16px;font-size:11px}.sikap-calendar-legend>span{display:inline-flex;align-items:center;gap:6px}.sikap-calendar-legend .dot{width:11px;height:11px;border-radius:50%;display:inline-block}.dot.filled{background:#9fc98a}.dot.empty{background:#ffbcbc}.dot.today{background:white;border:2px solid #165a39}
+@media(max-width:650px){
+ .sikap-calendar-panel .section-head h2{font-size:19px}.sikap-calendar-panel .section-head{margin-bottom:12px}
+ .sikap-calendar-toolbar{gap:9px;margin-bottom:13px}.sikap-calendar-toolbar input{font-size:16px;min-height:40px}
+ .sikap-calendar-summary{gap:7px;margin-bottom:14px}.sikap-calendar-summary>span{gap:6px;padding:9px 4px}.sikap-calendar-summary .sikap-ui-icon{width:23px;height:23px}.sikap-calendar-summary b{font-size:23px!important}.sikap-calendar-summary small{font-size:9px}
+ .sikap-calendar-weekday{font-size:11px;padding:7px 0}.sikap-calendar-day,.sikap-calendar-blank{min-height:47px}
+ .sikap-calendar-day strong{font-size:15px!important}.sikap-calendar-legend{font-size:10px;margin-top:12px}
+ .footnav{background:#fff;backdrop-filter:none}.footnav button{font-size:11px}
+}
+@media(max-width:350px){.sikap-calendar-summary .sikap-ui-icon{display:none}.sikap-calendar-day strong{font-size:14px!important}}
+}

@@ -70,3 +70,7 @@ Nama menu dapat berbeda menurut browser. PWA tetap membutuhkan internet untuk lo
 Beranda menggunakan data pegawai sebenarnya, kalender langsung terlihat, kartu kegiatan terbaru dan tombol Isi LCKH. Riwayat berubah menjadi kartu pada ponsel dan tetap tabel pada desktop. Tidak ada foto atau angka contoh dari mockup yang dimasukkan.
 
 Pemeriksaan lokal mencakup sintaks, manifest, ukuran ikon, referensi aset dan lingkup cache. Instalasi pada perangkat, login langsung, dan hasil visual perlu diperiksa setelah deployment HTTPS.
+
+## Pembaruan ikon dan kalender
+
+Ikon navigasi sekarang SVG garis, menggantikan karakter simbol lama. Kalender menggunakan kotak tanggal menyatu, ringkasan bergambar, serta legenda titik. Modul `10-ikon-dan-kalender.js` dan CSS `22-ikon-dan-kalender.css` harus diunggah bersama index terbaru. Cache PWA dinaikkan ke v2. Tutup seluruh jendela/tab aplikasi lalu buka lagi setelah deployment.
