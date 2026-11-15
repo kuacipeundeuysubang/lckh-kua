@@ -3,7 +3,7 @@
  const main=document.querySelector('#sikapApp .main');
  if(main){
   const header=document.createElement('div');header.className='sikap-app-header';
-  header.innerHTML='<div class="sikap-app-brand"><img src="assets/images/sikap-logo.png?v=3" alt=""><div><strong>SIKAP</strong><span>Kegiatan dan Pelaporan KUA</span></div></div><button id="sikapInstall" type="button" aria-label="Pasang aplikasi SIKAP">Pasang</button>';
+  header.innerHTML='<div class="sikap-app-brand"><img src="assets/images/sikap-logo.png?v=3" alt=""><div><strong>SIKAP</strong><span>Sistem Kinerja Pegawai KUA</span></div></div><button id="sikapInstall" type="button" aria-label="Pasang aplikasi SIKAP">Pasang</button>';
   main.prepend(header);
  }
  const baseHome=home;

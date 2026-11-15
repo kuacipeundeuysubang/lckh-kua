@@ -82,3 +82,7 @@ Titik legenda Belum direset agar tidak mewarisi padding .empty. Nama pada header
 ## Header menyatu
 
 Baris identitas akun di atas dihilangkan dari tampilan. Tombol Muat Ulang dan Keluar asli dipindahkan ke header hijau yang sama, sehingga handler dan pengamanan tetap berjalan. Header bersama tampil setelah login, termasuk pada dashboard Admin KUA/Super Admin; tersembunyi pada halaman login. Tidak ada perubahan sesi, akun atau data. Cache PWA v4.
+
+## Nama aplikasi dan logo tunggal
+
+Kepanjangan SIKAP: Sistem Kinerja Pegawai KUA. Logo sidebar dihapus, sehingga halaman setelah login hanya menampilkan logo pada header hijau. Nama diperbarui pada login, header, footer, judul halaman dan manifest aplikasi. Cache PWA v5. Nama aplikasi yang sudah terpasang dapat memerlukan waktu untuk mengikuti pembaruan manifest browser.

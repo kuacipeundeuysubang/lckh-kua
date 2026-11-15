@@ -19,3 +19,5 @@
 @media(max-width:420px){.sikap-global-header .sikap-header-actions{width:100%;justify-content:flex-end}.sikap-global-header .sikap-app-brand{width:100%}}
 }
 @media print{.sikap-global-header{display:none!important}}
+
+@media screen{.sidebar>.nav{margin-top:8px}.sikap-global-header .sikap-app-brand span{white-space:normal;line-height:1.4}}

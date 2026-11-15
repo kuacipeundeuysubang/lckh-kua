@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "SIKAP — Kegiatan dan Pelaporan KUA",
+  "name": "SIKAP — Sistem Kinerja Pegawai KUA",
   "short_name": "SIKAP",
-  "description": "Pencatatan LCKH dan pelaporan kegiatan pegawai KUA.",
+  "description": "Sistem Kinerja Pegawai KUA untuk pencatatan LCKH dan pelaporan otomatis.",
   "lang": "id",
   "start_url": "./",
   "scope": "./",
