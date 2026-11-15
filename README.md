@@ -46,3 +46,9 @@ Tambahan modul `08-formulir-lckh.js` dan stylesheet `18-formulir-lckh.css`: penc
 ## Pembaruan tampilan ringkas
 
 Isian tautan bukti dihapus. Jenis bukti dukung tetap tersedia. Referensi lama di database dipertahankan saat edit, tetapi tidak ditampilkan dalam rekap LCKB. Teks bantuan berulang pada formulir dan beranda dipersingkat. Stylesheet `19-template-ringkas.css` merapikan formulir satu kolom, ukuran sentuh, dan ukuran teks ponsel.
+
+## Logo SIKAP
+
+Logo dokumen, huruf S dan centang emas diterapkan pada login, sidebar, favicon, dan ikon Apple. Berkas asli serta ukuran web berada di `assets/images/sikap-*`. Desain dibuat dengan ImageGen; aset web diperkecil dari hasil asli. Setelah unggah, muat ulang Ctrl+F5 agar ikon baru terlihat.
+
+Logo terkini menggunakan buku terbuka dengan centang emas, menggantikan logo dokumen-S sebelumnya. Tulisan pendamping: SIKAP — Kegiatan dan Pelaporan KUA.
