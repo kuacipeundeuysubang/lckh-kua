@@ -1,3 +1,11 @@
+## Pembaruan master LCKH berdasarkan Kepdirjen Bimas Islam 888 Tahun 2026
+
+- Formulir LCKH menggunakan filter Fungsi A–H. Setelah memilih fungsi, pengguna dapat memilih standar pelayanan di fungsi itu atau kegiatan operasional. Pencarian mencakup kedua jenis kegiatan dan mengikuti jabatan atau penugasan pengguna.
+- Katalog memuat 388 pilihan, termasuk 12 tambahan. Undangan BIMWIN berada di B, penataan arsip register nikah NB/NA di A, dan pengajuan pencairan PNBP di H. BRUS tetap berada di B sebagai kegiatan operasional.
+- Super Admin dapat melihat katalog bawaan dan master tambahan dalam satu tabel, dengan penyaring fungsi dan sumber. Kode lama pada master tambahan dipetakan saat aplikasi memuat data. Gunakan Edit untuk menyimpan koreksi pada baris master bersama bila diperlukan.
+- Pilihan kegiatan mengisi output, bukti dukung, dan satuan. Sesuaikan hasil dan bukti dengan pekerjaan yang benar-benar dilakukan.
+- Salin seluruh paket ke root repositori atau perbarui `index.html`, `sw.js`, dan modul JavaScript `01`, `02`, `06`, serta `08`. Pembaruan ini tidak memerlukan migrasi database.
+
 # SIKAP — paket GitHub
 
 Paket ini memisahkan halaman, stylesheet, JavaScript, dan gambar. Semua revisi terakhir sudah disertakan.

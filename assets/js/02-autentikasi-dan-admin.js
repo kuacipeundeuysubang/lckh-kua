@@ -171,18 +171,17 @@ submitEntry=async function(event){
  if(!manual&&!old&&(!m||!sikapCocokJabatan(m,V('frole')))){toast('Pilih kegiatan dari master yang sesuai jabatan.');return;}
  const e={
    date:V('fdate'),role:old?.role||(manual?V('frole'):m?.role||V('frole')),source:manual?'manual':'master',
-   code:manual?'':(old?.code||m?.code||''),category:manual?V('fcategory'):(old?.category||m?.category),
+   code:manual?'':(old?.code??m?.code??''),category:manual?V('fcategory'):(old?.category||m?.category),
    service:manual?FUNCTIONS9[V('fcategory')]:(old?.service||m?.service),
    detail:manual?V('fdetail').trim():(old?.detail||m?.detail),
-   output:manual?V('foutput').trim():(old?V('foutput').trim():m?.output),
+   output:V('foutput').trim(),
    evidence:V('fevidence').trim(),
    volume:Number(V('fvolume')),unit:sikapNilaiSatuan(),
    note:V('fnote').trim(),link:old?.link||''
  };
- if(e.code && (SIKAP_STANDAR_888[e.code]||SIKAP_PETA_LAMA_888[e.code])){const mapped=sikapKelompok888(e.code,e.category);e.code=mapped.code;e.category=mapped.category;e.service=mapped.service;}
- const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
+  const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
  const validFungsi=Boolean(!e.code&&FUNCTIONS9[e.category]&&e.category!=='I');
- if(!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
+ if(!(old&&!manual)&&!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
  if(!sikapValidEntryDate(e.date)){alert('Tanggal pelaksanaan tidak valid.');return;}
  if(!e.role||!e.detail||!e.output){alert('Jabatan, uraian, atau output belum lengkap.');return;}
  if(!e.unit){alert('Pilih satuan, atau isi satuan manual jika memilih Lainnya.');return;}

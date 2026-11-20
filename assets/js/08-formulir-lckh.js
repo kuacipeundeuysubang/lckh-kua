@@ -23,6 +23,7 @@ const sikapEntryPickBase=pick;
 pick=function(index){
  sikapEntryPickBase(index);
  const activity=state.selected;
+ if(!state.editId)sikapAturOutput(activity);
  if(E('fevidence')&&!state.editId)E('fevidence').value=activity?.evidence||'';
  if(!state.editId&&activity?.unit){E('funitSelect').innerHTML=sikapOpsiSatuan(activity.unit);const manual=E('funitManual');if(manual)manual.value=sikapSatuanLain(activity.unit);sikapSatuanBerubah();}
 };
