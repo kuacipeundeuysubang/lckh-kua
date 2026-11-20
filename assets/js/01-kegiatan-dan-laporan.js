@@ -121,7 +121,7 @@ function sikapPeranTersedia(){
  return dasar.length?dasar:[];
 }
 function sikapCocokJabatan(item,peran){
- if(!peran)return true;
+ if(!peran)return false;
  if(peran==='Operator SIMKAH')return item.role==='Operator SIMKAH'||(item.role==='Pengadministrasi Perkantoran' && /simkah/i.test([item.choice,item.detail,item.output,item.service].join(' ')));
  return item.role===peran;
 }
@@ -133,25 +133,73 @@ async function sikapMuatTugasRangkap(){
  sikapTugasRangkap=Array.isArray(data?.peran_tambahan)?data.peran_tambahan:[];
  if(window.sikapLoadSharedMaster)await window.sikapLoadSharedMaster();
 }
-function entry(){const edit=db.entries.find(x=>x.id===state.editId),draft=!edit?state.copyDraft:null,mode=edit?edit.source:(draft?.source||state.mode);const roles=sikapPeranTersedia();const candidateRole=edit?.role||draft?.role||state.selectedRole||sikapJabatanUtama()||'';const role=edit?.role||(roles.includes(candidateRole)?candidateRole:(roles[0]||''));const selected=edit&&edit.source==='master'?MASTER.find(m=>m.code===edit.code&&m.detail===edit.detail&&m.role===edit.role):(draft?.source==='master'?MASTER.find(m=>(m.code===draft.code||m.sikapKodeLama===draft.code)&&m.detail===draft.detail&&m.role===draft.role):state.selected);E('content').innerHTML=`<section class="panel" style="margin-top:0"><div class="section-head"><h2>${edit?'Edit Kegiatan':'Catat Kegiatan Baru'}</h2></div><div class="mode"><button class="${mode==='master'?`${edit?'':`<div class="field full"><label>Fungsi KUA</label><select id="fFunction" onchange="sikapFungsiBerubah(this.value)"><option value="">Semua fungsi KUA (A–H)</option>${sikapOpsiFungsi(state.functionFilter)}</select></div><div class="field full" id="sikapServiceFilter" ${state.functionFilter?'':'hidden'}><label>Standar pelayanan atau kegiatan operasional</label><select id="fservice" onchange="sikapLayananBerubah(this.value)"></select></div><div class="field full"><label>Cari kegiatan</label><input class="search" id="activitySearch" type="search" placeholder="Contoh: BIMWIN, arsip, akta nikah" value="${h(state.activityQuery)}" oninput="sikapCariKegiatanBerubah()"></div>`}<div class="field full"><label>Pilih uraian kegiatan *</label><div class="actions" style="margin:8px 0"><button type="button" id="sikapGantiPilihanBtn" class="btn alt" style="display:none" onclick="sikapGantiPilihan()">↻ Ganti Kegiatan</button></div><div id="results" class="result"></div></div><div class="full" id="autoArea"></div><div class="field full" id="sikapMasterOutputField" ${edit?'':'hidden'}><label for="foutput">Output kegiatan *</label><input id="foutput" ${edit?'required':'disabled'} value="${h(edit?.output||'')}" placeholder="Isi hasil nyata kegiatan"></div>${edit?`<div class="field full"><label for="fevidence">Jenis bukti dukung</label><input id="fevidence" value="${h(edit.evidence||'')}" placeholder="Bukti kegiatan"></div>`:""}`:`<div class="field full"><label>Kelompok tugas *</label><select id="fcategory" required>${Object.entries(FUNCTIONS9).map(([k,v])=>`<option value="${k}" ${k===(edit?.category||draft?.category||"H")?"selected":""}>${k} · ${h(v)}</option>`).join("")}</select></div><div class="field full"><label>Uraian kegiatan manual *</label><textarea id="fdetail" rows="3" required placeholder="Tuliskan pekerjaan yang benar-benar dikerjakan">${h(edit?.detail||draft?.detail||'')}</textarea></div><div class="field full"><label>Output kegiatan *</label><input id="foutput" required placeholder="Hasil nyata dari kegiatan" value="${h(edit?.output||draft?.output||'')}"></div><div class="field full"><label>Jenis bukti dukung</label><input id="fevidence" placeholder="Contoh: Notulen, dokumentasi foto, daftar hadir" value="${h(edit?.evidence||draft?.evidence||'')}"></div>`}<div class="field"><label>Volume realisasi *</label><input id="fvolume" type="number" inputmode="decimal" min="0.01" max="9999999999.99" step="0.01" required value="${h(edit?.volume||draft?.volume||1)}"></div><div class="field"><label for="funitSelect">Satuan *</label><select id="funitSelect" required onchange="sikapSatuanBerubah()">${sikapOpsiSatuan(edit?.unit||draft?.unit||'Layanan')}</select><input id="funitManual" aria-label="Isi satuan lainnya" placeholder="Ketik satuan lainnya" style="margin-top:8px;${sikapSatuanLain(edit?.unit||draft?.unit||'Layanan')?'':'display:none;'}" value="${h(sikapSatuanLain(edit?.unit||draft?.unit||'Layanan'))}"></div><div class="field full"><label>Keterangan (opsional)</label><textarea id="fnote" rows="2" placeholder="Informasi tambahan">${h(edit?.note||draft?.note||'')}</textarea></div><div class="full actions"><button class="btn" type="submit">✓ ${edit?'Simpan Perubahan':'Simpan LCKH'}</button><button class="btn ghost" type="button" onclick="go('history')">Batal</button></div></div></form></section>`;if(mode==='master'){
- if(edit){state.selected=null;}else if(selected){state.selected=selected;sikapMasterTerkunci=true;}
+function sikapMasterJabatan(role){
+ return sikapPeranTersedia().includes(role)?MASTER.filter(item=>sikapCocokJabatan(item,role)):[];
+}
+function sikapFungsiJabatan(role){
+ const categories=new Set(sikapMasterJabatan(role).map(item=>item.category));
+ return Object.entries(FUNCTIONS9).filter(([key])=>categories.has(key));
+}
+function sikapKunciLayanan(item){return item.code||'operasional';}
+function sikapPilihanLayanan(role,category){
+ return new Map(sikapMasterJabatan(role).filter(item=>item.category===category)
+  .map(item=>[sikapKunciLayanan(item),sikapNamaKelompok(item)]));
+}
+function sikapKegiatanTerpilih(item){
+ return MASTER.includes(item)&&sikapPeranTersedia().includes(V('frole'))
+  &&sikapCocokJabatan(item,V('frole'))&&item.category===V('fFunction')
+  &&sikapKunciLayanan(item)===V('fservice');
+}
+function entry(){
+ const edit=db.entries.find(x=>x.id===state.editId),draft=!edit?state.copyDraft:null;
+ const mode=edit?.source||draft?.source||state.mode;
+ const roles=sikapPeranTersedia(),candidate=draft?.role||state.selectedRole||sikapJabatanUtama();
+ const role=edit?.role||(roles.includes(candidate)?candidate:(roles[0]||''));
+ const functions=sikapFungsiJabatan(role);
+ const manualCategory=edit?.category||draft?.category;
+ if(!edit&&mode==='master'){
+  const allowed=sikapMasterJabatan(role);
+  if(draft){
+   state.selected=draft.role===role?allowed.find(m=>(m.code===(draft.code||'')||m.sikapKodeLama===draft.code)&&m.detail===draft.detail):null;
+   state.functionFilter=state.selected?.category||'';
+   state.service=state.selected?sikapKunciLayanan(state.selected):'';
+  }
+  if(!functions.some(([key])=>key===state.functionFilter))state.functionFilter='';
+  if(!sikapPilihanLayanan(role,state.functionFilter).has(state.service))state.service='';
+  if(!allowed.includes(state.selected)||state.selected.category!==state.functionFilter||sikapKunciLayanan(state.selected)!==state.service)state.selected=null;
+  sikapMasterTerkunci=Boolean(state.selected);
+ }
+ E('content').innerHTML=`<section class="panel" style="margin-top:0"><div class="section-head"><h2>${edit?'Edit Kegiatan':'Catat Kegiatan Baru'}</h2></div>
+ ${edit?'':`<div class="mode">
+ <button type="button" class="${mode==='master'?'active':''}" onclick="setMode('master')">Pilih Master</button>
+ <button type="button" class="${mode==='manual'?'active':''}" onclick="setMode('manual')">Isi Manual</button>
+ <button type="button" class="tinybtn" onclick="sikapSalinBuka()">Salin Kegiatan</button></div>`}
+ <form id="lckhForm" onsubmit="submitEntry(event)"><div class="formgrid">
+ <div class="field"><label for="frole">Jabatan *</label><select id="frole" required onchange="roleChange()" ${edit?'disabled':''}>
+ ${(edit?[role]:roles).map(key=>`<option value="${h(key)}" ${key===role?'selected':''}>${h(key)}</option>`).join('')||'<option value="">Jabatan belum tersedia</option>'}</select></div>
+ <div class="field"><label for="fdate">Tanggal kegiatan *</label><input type="date" id="fdate" required value="${h(edit?.date||draft?.date||today())}"></div>
+ ${!edit&&sikapTugasRangkapStatus?'<p class="full mini muted">Penugasan rangkap belum dimuat. Gunakan Muat Ulang untuk mencoba kembali.</p>':''}
+ ${mode==='master'?`${edit?'':`<div class="field full"><label for="fFunction">Fungsi KUA *</label><select id="fFunction" required onchange="sikapFungsiBerubah(this.value)" ${functions.length?'':'disabled'}><option value="">${functions.length?'Pilih fungsi':'Belum ada fungsi untuk jabatan ini'}</option>${functions.map(([key,label])=>`<option value="${key}" ${key===state.functionFilter?'selected':''}>${key} · ${h(label)}</option>`).join('')}</select></div>
+ <div class="field full" id="sikapServiceFilter"><label for="fservice">Layanan *</label><select id="fservice" required onchange="sikapLayananBerubah(this.value)"></select></div>
+ <div class="field full" id="sikapActivitySearch"><label for="activitySearch">Cari kegiatan</label><input class="search" id="activitySearch" type="search" placeholder="Cari dalam layanan yang dipilih" value="${h(state.activityQuery)}" oninput="sikapCariKegiatanBerubah()"><button type="button" class="tinybtn" onclick="sikapSaringFavorit(this)">${state.showFavorites?'Semua kegiatan':'☆ Kegiatan favorit'}</button></div>`}<div class="field full"><label>${edit?'Uraian kegiatan':'Pilih uraian kegiatan *'}</label><div class="actions" style="margin:8px 0"><button type="button" id="sikapGantiPilihanBtn" class="btn alt" style="display:none" onclick="sikapGantiPilihan()">↻ Ganti Kegiatan</button></div><div id="results" class="result"></div></div><div class="full" id="autoArea"></div><div class="field full" id="sikapMasterOutputField" ${edit||state.selected?'':'hidden'}><label for="foutput">Output kegiatan *</label><input id="foutput" ${edit||state.selected?'required':'disabled'} value="${h(edit?.output||draft?.output||state.selected?.output||'')}" placeholder="Isi hasil nyata kegiatan"></div>${edit?`<div class="field full"><label for="fevidence">Jenis bukti dukung</label><input id="fevidence" value="${h(edit.evidence||'')}" placeholder="Bukti kegiatan"></div>`:""}`:`<div class="field full"><label for="fcategory">Fungsi KUA *</label><select id="fcategory" required ${edit?'disabled':''}>${edit?`<option value="${h(edit.category)}">${h(FUNCTIONS9[edit.category]||edit.category)}</option>`:`<option value="">Pilih fungsi</option>${functions.map(([k,v])=>`<option value="${k}" ${k===manualCategory?'selected':''}>${k} · ${h(v)}</option>`).join('')}`}</select></div><div class="field full"><label>Uraian kegiatan manual *</label><textarea id="fdetail" rows="3" required placeholder="Tuliskan pekerjaan yang benar-benar dikerjakan">${h(edit?.detail||draft?.detail||'')}</textarea></div><div class="field full"><label>Output kegiatan *</label><input id="foutput" required placeholder="Hasil nyata dari kegiatan" value="${h(edit?.output||draft?.output||'')}"></div><div class="field full"><label>Jenis bukti dukung</label><input id="fevidence" placeholder="Contoh: Notulen, dokumentasi foto, daftar hadir" value="${h(edit?.evidence||draft?.evidence||'')}"></div>`}<div class="field"><label>Volume realisasi *</label><input id="fvolume" type="number" inputmode="decimal" min="0.01" max="9999999999.99" step="0.01" required value="${h(edit?.volume||draft?.volume||1)}"></div><div class="field"><label for="funitSelect">Satuan *</label><select id="funitSelect" required onchange="sikapSatuanBerubah()">${sikapOpsiSatuan(edit?.unit||draft?.unit||'Layanan')}</select><input id="funitManual" aria-label="Isi satuan lainnya" placeholder="Ketik satuan lainnya" style="margin-top:8px;${sikapSatuanLain(edit?.unit||draft?.unit||'Layanan')?'':'display:none;'}" value="${h(sikapSatuanLain(edit?.unit||draft?.unit||'Layanan'))}"></div><div class="field full"><label>Keterangan (opsional)</label><textarea id="fnote" rows="2" placeholder="Informasi tambahan">${h(edit?.note||draft?.note||'')}</textarea></div><div class="full actions"><button class="btn" type="submit">✓ ${edit?'Simpan Perubahan':'Simpan LCKH'}</button><button class="btn ghost" type="button" onclick="go('history')">Batal</button></div></div></form></section>`;if(mode==='master'){
+ if(edit)state.selected=null;
  if(!state.selected)sikapMasterTerkunci=false;
  sikapIsiFilterLayanan();
  updateResults();
 }}
-function setMode(m){state.selectedRole=null;sikapMasterTerkunci=false;state.copyDraft=null;state.mode=m;state.selected=null;state.editId=null;state.activityQuery='';state.service='';state.functionFilter='';state.resultLimit=30;entry()}
+function setMode(m){state.selectedRole=V('frole')||state.selectedRole;sikapMasterTerkunci=false;state.copyDraft=null;state.mode=m;state.selected=null;state.editId=null;state.activityQuery='';state.service='';state.functionFilter='';state.resultLimit=30;entry()}
 function roleChange(){
  state.selectedRole=V('frole');sikapMasterTerkunci=false;state.copyDraft=null;state.selected=null;
- state.service='';state.activityQuery='';state.resultLimit=30;entry();
+ const date=V('fdate');
+ state.functionFilter='';state.service='';state.activityQuery='';state.resultLimit=30;entry();
+ E('fdate').value=date;
 }
 function sikapIsiFilterLayanan(){
  const select=E('fservice');if(!select)return;
- const category=state.functionFilter;
- E('sikapServiceFilter').hidden=!category;
- const standards=Object.entries(SIKAP_STANDAR_888).filter(([code])=>code[3]===category);
- select.innerHTML='<option value="">Semua kegiatan pada fungsi ini</option>'
-  +standards.map(([code,label])=>`<option value="${code}">${code} · ${h(label)}</option>`).join('')
-  +'<option value="operasional">Kegiatan operasional</option>';
+ const options=sikapPilihanLayanan(V('frole'),state.functionFilter);
+ select.disabled=!options.size;
+ select.innerHTML='<option value="">'+(options.size?'Pilih layanan':'Pilih fungsi terlebih dahulu')+'</option>'
+  +[...options].sort(([a],[b])=>a.localeCompare(b)).map(([code,label])=>`<option value="${code}">${h(label)}</option>`).join('');
  select.value=state.service;
 }
 function updateResults(){
@@ -161,20 +209,22 @@ function updateResults(){
  if(edit){
   results.innerHTML=`<div class="info">${h(edit.detail)}</div>`;auto.innerHTML='';return;
  }
+ const ready=Boolean(V('fservice'));
+ E('sikapActivitySearch').hidden=!ready;
+ E('activitySearch').disabled=!ready;
  state.activityQuery=V('activitySearch');
  const role=V('frole'),words=state.activityQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
- const items=MASTER.filter(x=>{
-  if(!sikapCocokJabatan(x,role)||(state.functionFilter&&x.category!==state.functionFilter))return false;
-  if(state.service==='operasional'?x.code:state.service&&x.code!==state.service)return false;
+ const items=ready?sikapMasterJabatan(role).filter(x=>{
+  if(x.category!==V('fFunction')||sikapKunciLayanan(x)!==V('fservice'))return false;
   if(state.showFavorites&&!isFavorite(x))return false;
   const searchable=[x.code,x.service,FUNCTIONS9[x.category],x.choice,x.detail,x.output,x.evidence].join(' ').toLowerCase();
   return words.every(word=>searchable.includes(word));
- }).sort((a,b)=>Number(isFavorite(b))-Number(isFavorite(a))||a.category.localeCompare(b.category)||a.choice.localeCompare(b.choice,'id'));
+ }).sort((a,b)=>Number(isFavorite(b))-Number(isFavorite(a))||a.category.localeCompare(b.category)||a.choice.localeCompare(b.choice,'id')):[];
  const limit=state.resultLimit||30;
  results.innerHTML=items.length?`<p class="mini muted" role="status">${items.length} kegiatan ditemukan</p>`+items.slice(0,limit).map(x=>
   `<button type="button" onclick="pick(${MASTER.indexOf(x)})"><b>${isFavorite(x)?'★ ':''}${h(x.choice)}</b><small>${h(x.category)} · ${h(sikapNamaKelompok(x))} · ${h(x.role)}</small></button>`
  ).join('')+(items.length>limit?`<button type="button" onclick="state.resultLimit=${limit+30};updateResults()">Tampilkan lebih banyak kegiatan</button>`:'')
- :'<div class="empty">Tidak ada kegiatan yang cocok. Ubah filter atau gunakan Isi Manual.</div>';
+ :`<div class="empty">${ready?'Tidak ada kegiatan yang cocok.':'Pilih fungsi dan layanan untuk melihat kegiatan.'}</div>`;
  const selected=state.selected;
  auto.innerHTML=selected?`<div class="autofill"><div class="pill">${h(selected.category)} · ${h(sikapNamaKelompok(selected))}</div><button class="tinybtn" type="button" style="margin:8px 0" onclick="toggleFavoriteSelected()">${isFavorite(selected)?'★ Hapus Favorit':'☆ Jadikan Favorit'}</button><b>URAIAN KEGIATAN</b><p>${h(selected.detail)}</p></div>`:'';
  sikapTampilkanPilihan();
@@ -184,8 +234,6 @@ function sikapTampilkanPilihan(){
  const chosen=!!state.selected&&sikapMasterTerkunci;
  const list=E('results');if(list){list.hidden=chosen;list.style.display=chosen?'none':'';}
  const btn=E('sikapGantiPilihanBtn');if(btn)btn.style.display=chosen?'inline-flex':'none';
- const service=E('fservice');if(service){service.disabled=false;service.closest('.field')?.classList.remove('hidden');}
- const search=E('activitySearch');if(search){search.readOnly=false;search.closest('.field')?.classList.remove('hidden');}
 }
 function sikapBukaDaftarKegiatan(){
  sikapMasterTerkunci=false;state.selected=null;state.resultLimit=30;
@@ -198,15 +246,15 @@ function sikapAturOutput(activity){
  field.hidden=!activity;output.disabled=!activity;output.required=!!activity;output.value=activity?.output||'';
 }
 function sikapGantiPilihan(){sikapBukaDaftarKegiatan();E('results')?.scrollIntoView({behavior:'smooth',block:'nearest'});}
-function sikapFungsiBerubah(value){state.functionFilter=value;state.service='';sikapIsiFilterLayanan();sikapBukaDaftarKegiatan();}
-function sikapLayananBerubah(value){state.service=value;sikapBukaDaftarKegiatan();}
+function sikapFungsiBerubah(value){state.functionFilter=value;state.service='';E('activitySearch').value='';sikapIsiFilterLayanan();sikapBukaDaftarKegiatan();}
+function sikapLayananBerubah(value){state.service=value;E('activitySearch').value='';sikapBukaDaftarKegiatan();}
 function sikapCariKegiatanBerubah(){sikapBukaDaftarKegiatan();}
 function sikapSaringFavorit(button){
  state.showFavorites=!state.showFavorites;
  button.textContent=state.showFavorites?'☆ Semua Kegiatan':'☆ Kegiatan Favorit';
  sikapBukaDaftarKegiatan();
 }
-function pick(i){state.selected=MASTER[i];sikapMasterTerkunci=true;updateResults();}
+function pick(i){if(!sikapKegiatanTerpilih(MASTER[i]))return;state.selected=MASTER[i];sikapMasterTerkunci=true;updateResults();return true;}
 const SIKAP_PILIHAN_SATUAN=['Layanan','Berkas','Dokumen','Kegiatan','Data','Laporan','Orang','Surat'];
 function sikapSatuanLain(unit){const t=String(unit||'').trim();return t&&!SIKAP_PILIHAN_SATUAN.includes(t)?t:'';}
 function sikapOpsiSatuan(unit){const val=String(unit||'Layanan').trim();return SIKAP_PILIHAN_SATUAN.map(u=>`<option value="${h(u)}" ${u===val?'selected':''}>${h(u)}</option>`).join('')+`<option value="__manual__" ${sikapSatuanLain(val)?'selected':''}>Lainnya (isi manual)</option>`;}
@@ -440,9 +488,10 @@ function sikapSalinBuka(){
 }
 function sikapSalinMuat(){
  const date=E('sikapSalinTanggal')?.value;
- sikapSalinItems=db.entries.filter(x=>x.date===date).sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'')||String(a.id).localeCompare(String(b.id)));
+ const roles=sikapPeranTersedia();
+ sikapSalinItems=db.entries.filter(x=>x.date===date&&roles.includes(x.role)).sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'')||String(a.id).localeCompare(String(b.id)));
  const p=E('sikapSalinPilihan');if(!p)return;
- if(!sikapSalinItems.length){p.innerHTML='<p class="info">Tidak ada kegiatan pada tanggal sumber ini. Pilih tanggal lain.</p>';E('sikapSalinPreview').innerHTML='';return;}
+ if(!sikapSalinItems.length){p.innerHTML='<p class="info">Tidak ada kegiatan untuk jabatan aktif atau penugasan rangkap pada tanggal ini.</p>';E('sikapSalinPreview').innerHTML='';return;}
  p.innerHTML=`<p class="mini muted">${sikapSalinItems.length} kegiatan ditemukan. Nomor mengikuti urutan kegiatan pada tanggal sumber.</p>
  <div class="sikap-salin-list">${sikapSalinItems.map((x,i)=>`<div><b>${i+1}.</b> ${h(x.detail)} <small>(${h(x.volume)} ${h(x.unit)})</small></div>`).join('')}</div>
  <div class="field" style="margin-top:12px"><label>Pilih kegiatan</label><select id="sikapSalinMode" onchange="sikapSalinPreview()"><option value="range">Rentang nomor</option><option value="all">Semua kegiatan</option></select></div>
@@ -473,6 +522,7 @@ async function sikapSalinSimpan(){
  if(sikapSalinBusy)return;
  const picked=sikapSalinDipilih(),target=E('sikapSalinTujuan')?.value;
  if(!picked?.length||!target||target===E('sikapSalinTanggal')?.value||!s67client||!s67profile?.kua_id||!s67currentUser){alert('Sesi, tanggal, atau rentang kegiatan tidak valid.');return;}
+ if(picked.some(x=>!sikapPeranTersedia().includes(x.role))){alert('Periksa jabatan pada kegiatan yang akan disalin.');return;}
  const records=picked.map((x,i)=>{
  const field=k=>document.querySelector(`[data-salin="${k}"][data-idx="${i}"]`)?.value?.trim()||'';
  return {...x,date:target,output:field('output'),volume:Number(field('volume')),unit:field('unit'),evidence:field('evidence'),note:field('note')};

@@ -21,14 +21,14 @@ entry=function(){
 };
 const sikapEntryPickBase=pick;
 pick=function(index){
- sikapEntryPickBase(index);
+ if(!sikapEntryPickBase(index))return;
  const activity=state.selected;
  if(!state.editId)sikapAturOutput(activity);
  if(E('fevidence')&&!state.editId)E('fevidence').value=activity?.evidence||'';
  if(!state.editId&&activity?.unit){E('funitSelect').innerHTML=sikapOpsiSatuan(activity.unit);const manual=E('funitManual');if(manual)manual.value=sikapSatuanLain(activity.unit);sikapSatuanBerubah();}
 };
 function sikapEntryContinue(date){
- sikapEntryNextDate=date;state.copyDraft=null;state.selected=null;state.selectedRole=null;state.mode='master';go('entry');E('fdate')?.focus();
+ sikapEntryNextDate=date;state.copyDraft=null;state.selected=null;state.selectedRole=null;state.functionFilter='';state.service='';state.activityQuery='';state.mode='master';go('entry');E('fdate')?.focus();
 }
 function sikapEntrySaved(date,edited){
  const box=document.createElement('section');box.className='panel sikap-entry-success';box.setAttribute('role','status');

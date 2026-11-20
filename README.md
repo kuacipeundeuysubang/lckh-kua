@@ -1,3 +1,10 @@
+## Formulir LCKH berdasarkan jabatan
+
+- Pilih jabatan utama atau salah satu penugasan rangkap, lalu Fungsi KUA, Layanan, dan Kegiatan. Fungsi dan layanan muncul jika memiliki kegiatan master untuk jabatan tersebut. Kegiatan tanpa kode standar muncul di pilihan Kegiatan operasional.
+- Pencarian dan favorit mengikuti layanan yang dipilih. Jika jabatan atau fungsi berubah, pilihan di bawahnya direset. Isi Manual menggunakan fungsi yang tersedia untuk jabatan yang dipilih.
+- Entri master baru mencatat jabatan yang dipilih, termasuk Operator SIMKAH. Entri lama tetap dapat dilihat dan diedit dengan jabatan dan klasifikasi historisnya. Salin kegiatan tersedia untuk jabatan yang masih aktif.
+- Unggah paket ke lokasi publikasi yang sama. Pembaruan ini tidak memerlukan migrasi database. Cache PWA v7.
+
 ## Pembaruan master LCKH berdasarkan Kepdirjen Bimas Islam 888 Tahun 2026
 
 - Formulir LCKH menggunakan filter Fungsi A–H. Setelah memilih fungsi, pengguna dapat memilih standar pelayanan di fungsi itu atau kegiatan operasional. Pencarian mencakup kedua jenis kegiatan dan mengikuti jabatan atau penugasan pengguna.

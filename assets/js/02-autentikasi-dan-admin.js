@@ -168,11 +168,13 @@ submitEntry=async function(event){
  if(state.editId&&!old){alert('Data edit tidak ada di Riwayat online. Muat ulang LCKH.');return;}
  const manual=old?old.source==='manual':state.mode==='manual';
  const m=state.selected;
- if(!manual&&!old&&(!m||!sikapCocokJabatan(m,V('frole')))){toast('Pilih kegiatan dari master yang sesuai jabatan.');return;}
+ if(!old&&!sikapPeranTersedia().includes(V('frole'))){toast('Pilih jabatan aktif atau penugasan rangkap.');return;}
+ if(manual&&!old&&!sikapFungsiJabatan(V('frole')).some(([key])=>key===V('fcategory'))){toast('Pilih fungsi yang sesuai jabatan.');return;}
+ if(!manual&&!old&&!sikapKegiatanTerpilih(m)){toast('Pilih kegiatan dari master yang sesuai jabatan.');return;}
  const e={
-   date:V('fdate'),role:old?.role||(manual?V('frole'):m?.role||V('frole')),source:manual?'manual':'master',
-   code:manual?'':(old?.code??m?.code??''),category:manual?V('fcategory'):(old?.category||m?.category),
-   service:manual?FUNCTIONS9[V('fcategory')]:(old?.service||m?.service),
+   date:V('fdate'),role:old?old.role:V('frole'),source:manual?'manual':'master',
+   code:old?(old.code||''):(manual?'':m.code),category:old?old.category:(manual?V('fcategory'):m.category),
+   service:old?old.service:(manual?FUNCTIONS9[V('fcategory')]:m.service),
    detail:manual?V('fdetail').trim():(old?.detail||m?.detail),
    output:V('foutput').trim(),
    evidence:V('fevidence').trim(),
@@ -181,9 +183,9 @@ submitEntry=async function(event){
  };
   const validLayanan=Boolean(e.code&&SIKAP_STANDAR_888[e.code]);
  const validFungsi=Boolean(!e.code&&FUNCTIONS9[e.category]&&e.category!=='I');
- if(!(old&&!manual)&&!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
+ if(!old&&!validLayanan&&!validFungsi){alert('Pilih 28 standar pelayanan atau Fungsi A–H.');return;}
  if(!sikapValidEntryDate(e.date)){alert('Tanggal pelaksanaan tidak valid.');return;}
- if(!e.role||!e.detail||!e.output){alert('Jabatan, uraian, atau output belum lengkap.');return;}
+ if((!old&&!e.role)||!e.detail||!e.output){alert('Jabatan, uraian, atau output belum lengkap.');return;}
  if(!e.unit){alert('Pilih satuan, atau isi satuan manual jika memilih Lainnya.');return;}
  if(!Number.isFinite(e.volume)||e.volume<=0){alert('Isi volume realisasi lebih dari nol.');return;}
  if(e.volume>9999999999.99||Math.abs(e.volume*100-Math.round(e.volume*100))>0.00001){alert('Volume maksimum 2 angka desimal.');return;}
@@ -206,7 +208,8 @@ submitEntry=async function(event){
    let result;
    if(old){
      // RLS tetap menentukan izin akhir. Identitas pemilik tidak pernah diubah.
-     result=await s67client.from('sikap_lckh').update({...payload,updated_at:new Date().toISOString()})
+     const {kode_sp,fungsi,jabatan_kegiatan,sumber_kegiatan,nama_layanan,...changes}=payload;
+     result=await s67client.from('sikap_lckh').update({...changes,updated_at:new Date().toISOString()})
        .eq('id',old.id).eq('user_id',s67currentUser).eq('kua_id',s67profile.kua_id).select('id');
    }else{
      result=await s67client.from('sikap_lckh').insert({...payload,user_id:s67currentUser,kua_id:s67profile.kua_id,id_master:null}).select('id');
