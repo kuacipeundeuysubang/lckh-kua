@@ -1,7 +1,13 @@
-
-/* Satu layanan per baris; setiap sel berisi daftar poin bernomor. */
-.report-table .lckb-group{break-after:avoid;page-break-after:avoid}
-.report-table.sikap-lckb-table th:nth-child(2),.report-table.sikap-lckb-table td:nth-child(2){width:46%}
-.report-table.sikap-lckb-table th:nth-child(3),.report-table.sikap-lckb-table td:nth-child(3){width:16%;min-width:0;white-space:normal!important}
-.report-table.sikap-lckb-table th:nth-child(4),.report-table.sikap-lckb-table td:nth-child(4){width:33%}
-@media print{.report-table.sikap-lckb-table{font-size:9pt}.report-table.sikap-lckb-table td{line-height:1.35;padding:5px 6px}.report-table .lckb-group th{text-align:left!important}}
+/* Judul layanan mencakup semua kolom dan diikuti baris kegiatan. */
+.report-table.sikap-lckb-table .lckb-group th {
+  text-align: left;
+  width: auto;
+}
+.report-table.sikap-lckb-table .lckb-activity-row td {
+  vertical-align: top;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.report-table.sikap-lckb-table .lckb-activity-row td:first-child {
+  text-align: center;
+}

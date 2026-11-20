@@ -1,3 +1,9 @@
+## Cetak laporan A4
+
+- LCKB menampilkan judul setiap layanan diikuti satu baris per kegiatan. Uraian, volume, dan bukti dukung berada dalam baris yang sama.
+- Pilih Landscape atau Portrait untuk LCKB, LCKH, RKB, dan WFO. Landscape menjadi pilihan awal. Admin KUA memilih orientasi di jendela pratinjau.
+- Pembaruan memakai cache PWA v8 dan tidak memerlukan migrasi database.
+
 ## Formulir LCKH berdasarkan jabatan
 
 - Pilih jabatan utama atau salah satu penugasan rangkap, lalu Fungsi KUA, Layanan, dan Kegiatan. Fungsi dan layanan muncul jika memiliki kegiatan master untuk jabatan tersebut. Kegiatan tanpa kode standar muncul di pilihan Kegiatan operasional.

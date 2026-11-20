@@ -398,12 +398,6 @@ function reportIdentity(){
 function reportDateCell(date){const d=new Date(date+'T12:00:00');const day=d.toLocaleDateString('id-ID',{weekday:'long'});const dayText=day.charAt(0).toUpperCase()+day.slice(1);const val=d.toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});return `<span class="day-name">${h(dayText)}</span><span class="date-value">${h(val)}</span>`}
 function reportTableBody(items,cols){
  if(!items.length)return `<tr><td colspan="${cols.length}" class="empty">Belum ada data untuk periode ini.</td></tr>`;
- if(state.reportType==='lckb'){
-  // Daftar bernomor yang sama pada ketiga kolom menjaga keterkaitan tiap poin.
-  const list=(points,field)=>`<ol style="margin:0;padding-left:19px;white-space:normal">${points.map(p=>`<li style="padding:0 0 3px 2px;white-space:pre-line;overflow-wrap:anywhere;line-height:1.35">${h(p[field])}</li>`).join('')}</ol>`;
-  return items.map((e,i)=>`<tr class="lckb-service-row"><td style="text-align:center;width:5%">${i+1}.</td><td style="white-space:normal;overflow-wrap:anywhere"><strong style="display:block;margin:0 0 5px;line-height:1.35">${h(e.heading)}</strong>${list(e.points,'activity')}</td><td style="white-space:normal!important;text-align:left">${list(e.points,'volumeText')}</td><td style="white-space:normal;overflow-wrap:anywhere">${list(e.points,'evidence')}</td></tr>`).join('');
- }
-
  const dateCounts=new Map();items.forEach(e=>dateCounts.set(e.date,(dateCounts.get(e.date)||0)+1));
  const seen=new Set(),sequence=new Map();
  return items.map((e,i)=>{
@@ -414,7 +408,30 @@ function reportTableBody(items,cols){
   return `<tr>${dateColumn}<td>${n}</td><td>${h(e.detail)}</td><td>${h(e.output)}</td><td>${h(e.volume)}</td><td>${h(e.unit)}</td><td>${h(e.note||'')}</td></tr>`;
  }).join('');
 }
-function reports(){const titles={lckh:'Laporan Capaian Kinerja Harian',lckb:'Laporan Capaian Kinerja Bulanan',rkb:'Rencana Kinerja Bulanan',wfo:'Laporan WFO (Jumat)'};let items=reportRows(),cols=colDefs();E('content').innerHTML=`<section class="panel" style="margin-top:0"><div class="section-head noprint"><h2>Laporan dari satu sumber LCKH</h2><span class="pill">4 jenis laporan</span></div><div class="toolbar noprint">${Object.keys(titles).map(k=>`<button class="btn ${state.reportType===k?'':'alt'}" onclick="state.reportType='${k}';reports()">${k.toUpperCase()}</button>`).join('')}</div><div class="toolbar noprint"><input type="month" value="${state.month}" onchange="state.month=this.value;reports()"><button class="btn alt" onclick="exportCSV()">↓ Unduh CSV</button><button class="btn ghost" onclick="printReport()">⎙ Cetak / PDF</button></div><div class="panel noprint" style="margin:14px 0;padding:16px;background:#f5faf6"><h2 style="margin:0 0 10px;font-size:15px">Tempat dan Tanggal Penandatanganan (Titimangsa)</h2><p class="muted mini" style="margin:0 0 12px">Tentukan sendiri tempat dan tanggal tanda tangan. Tidak mengubah periode maupun tanggal kegiatan LCKH.</p><div class="formgrid"><div class="field"><label for="sikapTitimangsaTempat">Tempat penandatanganan</label><input id="sikapTitimangsaTempat" maxlength="100" placeholder="Contoh: Cipeundeuy" value="${h(getTitimangsa().place)}" oninput="updateTitimangsa()"></div><div class="field"><label for="sikapTitimangsaTanggal">Tanggal penandatanganan</label><input id="sikapTitimangsaTanggal" type="date" value="${h(getTitimangsa().date)}" onchange="updateTitimangsa()"></div></div></div><div class="printheader"><h2 class="print-title">${titles[state.reportType].toUpperCase()}</h2><h2 class="print-month">BULAN ${new Date(state.month+'-02T12:00:00').toLocaleDateString('id-ID',{month:'long',year:'numeric'}).toUpperCase()}</h2>${reportIdentity()}</div><div class="notice noprint" style="margin:12px 0">${completenessBanner()}</div>${state.reportType==='lckb'&&lckbData(filtered()).unmapped.length?`<div class="notice noprint" style="margin:10px 0;border-color:#f59e0b">⚠ ${lckbData(filtered()).unmapped.length} kegiatan belum memiliki kode SP atau kategori A–I. Kegiatan tetap tersimpan di LCKH, tetapi belum masuk rekap LCKB. Edit kegiatan manual untuk menentukan kategorinya.</div>`:''}${state.reportType==='lckb'?'<p class="notice noprint">Volume LCKB adalah jumlah volume entri LCKH, bukan jumlah layanan atau pemohon unik. Untuk hasil akurat, hindari menghitung beberapa tahapan layanan yang sama sebagai beberapa layanan berbeda.</p>':''}<div class="tablewrap"><table class="report-table ${state.reportType==='lckb'?'sikap-lckb-table':''}"><thead><tr>${cols.map(x=>`<th>${h(x)}</th>`).join('')}</tr></thead><tbody>${reportTableBody(items,cols)}</tbody></table></div><p class="notice noprint">${state.reportType==='wfo'?'WFO mengambil seluruh LCKH hari Jumat pada bulan yang dipilih. Pastikan kegiatan tersebut benar-benar termasuk WFO sesuai aturan kantor.':state.reportType==='rkb'?'RKB ini disusun otomatis dari realisasi LCKH sesuai tanggal kegiatan. Karena sumbernya realisasi, hasil ini merupakan rekonstruksi administratif, bukan rencana yang ditetapkan sebelum pelaksanaan. Pastikan penggunaannya sebagai RKB resmi telah disetujui pejabat berwenang.':'Hasil cetak menggunakan kolom masing-masing jenis laporan dan identitas pegawai dari Pengaturan.'}</p>${signatureBlock()}</section>`}
+function reportTableSections(items, cols){
+ if(state.reportType==='lckb' && items.length){
+  return items.map((service, index) => {
+   const heading = `<tr class="lckb-group"><th colspan="${cols.length}" scope="rowgroup">${index + 1}. ${h(service.heading)}</th></tr>`;
+   const activities = service.points.map((point, i) => `<tr class="lckb-activity-row"><td>${i + 1}</td><td>${h(point.activity)}</td><td>${h(point.volumeText)}</td><td>${h(point.evidence)}</td></tr>`).join('');
+   return `<tbody>${heading}${activities}</tbody>`;
+  }).join('');
+ }
+
+ return `<tbody>${reportTableBody(items,cols)}</tbody>`;
+}
+let reportOrientation='landscape';
+function reportOrientationControl(value='landscape'){
+ return `<label>Orientasi A4 <select data-report-orientation><option value="landscape"${value==='landscape'?' selected':''}>Landscape</option><option value="portrait"${value==='portrait'?' selected':''}>Portrait</option></select></label>`;
+}
+function reportPageCSS(orientation){
+ return `@page{size:A4 ${orientation==='portrait'?'portrait':'landscape'};margin:12mm}`;
+}
+function reports(){const titles={lckh:'Laporan Capaian Kinerja Harian',lckb:'Laporan Capaian Kinerja Bulanan',rkb:'Rencana Kinerja Bulanan',wfo:'Laporan WFO (Jumat)'};let items=reportRows(),cols=colDefs();E('content').innerHTML=`<section class="panel" style="margin-top:0"><div class="section-head noprint"><h2>Laporan dari satu sumber LCKH</h2><span class="pill">4 jenis laporan</span></div><div class="toolbar noprint">${Object.keys(titles).map(k=>`<button class="btn ${state.reportType===k?'':'alt'}" onclick="state.reportType='${k}';reports()">${k.toUpperCase()}</button>`).join('')}</div><div class="toolbar noprint"><input type="month" value="${state.month}" onchange="state.month=this.value;reports()"><button class="btn alt" onclick="exportCSV()">↓ Unduh CSV</button>${reportOrientationControl(reportOrientation)}<button class="btn ghost" onclick="printReport()">⎙ Cetak / PDF</button></div><div class="panel noprint" style="margin:14px 0;padding:16px;background:#f5faf6"><h2 style="margin:0 0 10px;font-size:15px">Tempat dan Tanggal Penandatanganan (Titimangsa)</h2><p class="muted mini" style="margin:0 0 12px">Tentukan sendiri tempat dan tanggal tanda tangan. Tidak mengubah periode maupun tanggal kegiatan LCKH.</p><div class="formgrid"><div class="field"><label for="sikapTitimangsaTempat">Tempat penandatanganan</label><input id="sikapTitimangsaTempat" maxlength="100" placeholder="Contoh: Cipeundeuy" value="${h(getTitimangsa().place)}" oninput="updateTitimangsa()"></div><div class="field"><label for="sikapTitimangsaTanggal">Tanggal penandatanganan</label><input id="sikapTitimangsaTanggal" type="date" value="${h(getTitimangsa().date)}" onchange="updateTitimangsa()"></div></div></div><div class="printheader"><h2 class="print-title">${titles[state.reportType].toUpperCase()}</h2><h2 class="print-month">BULAN ${new Date(state.month+'-02T12:00:00').toLocaleDateString('id-ID',{month:'long',year:'numeric'}).toUpperCase()}</h2>${reportIdentity()}</div><div class="notice noprint" style="margin:12px 0">${completenessBanner()}</div>${state.reportType==='lckb'&&lckbData(filtered()).unmapped.length?`<div class="notice noprint" style="margin:10px 0;border-color:#f59e0b">⚠ ${lckbData(filtered()).unmapped.length} kegiatan belum memiliki kode SP atau kategori A–I. Kegiatan tetap tersimpan di LCKH, tetapi belum masuk rekap LCKB. Edit kegiatan manual untuk menentukan kategorinya.</div>`:''}${state.reportType==='lckb'?'<p class="notice noprint">Volume LCKB adalah jumlah volume entri LCKH, bukan jumlah layanan atau pemohon unik. Untuk hasil akurat, hindari menghitung beberapa tahapan layanan yang sama sebagai beberapa layanan berbeda.</p>':''}<div class="tablewrap"><table class="report-table ${state.reportType==='lckb'?'sikap-lckb-table':''}"><thead><tr>${cols.map(x=>`<th>${h(x)}</th>`).join('')}</tr></thead>${reportTableSections(items,cols)}</table></div><p class="notice noprint">${state.reportType==='wfo'?'WFO mengambil seluruh LCKH hari Jumat pada bulan yang dipilih. Pastikan kegiatan tersebut benar-benar termasuk WFO sesuai aturan kantor.':state.reportType==='rkb'?'RKB ini disusun otomatis dari realisasi LCKH sesuai tanggal kegiatan. Karena sumbernya realisasi, hasil ini merupakan rekonstruksi administratif, bukan rencana yang ditetapkan sebelum pelaksanaan. Pastikan penggunaannya sebagai RKB resmi telah disetujui pejabat berwenang.':'Hasil cetak menggunakan kolom masing-masing jenis laporan dan identitas pegawai dari Pengaturan.'}</p>${signatureBlock()}</section>`;
+ E('content').querySelector('[data-report-orientation]').onchange = event => {
+  reportOrientation = event.target.value;
+  sikapPrintStyle.textContent = sikapReportPrintCSS() + reportPageCSS(reportOrientation);
+ };
+}
 function titimangsaStorageKey(){
  // Pengaturan terpisah menurut identitas pegawai dan tersimpan pada browser ini.
  return 'sikap_titimangsa_v1_'+String(db.profile?.nip||'default').replace(/[^a-zA-Z0-9_-]/g,'');
@@ -443,8 +460,31 @@ function signatureBlock(){
  const supervisorLabel=state.reportType==='wfo'?'Pejabat Penilai Kinerja':'Mengetahui,';
  return `<div class="signature-area"><div class="signature-location"><div aria-hidden="true"></div><div class="signature-location-date" id="sikapTitimangsaPratinjau">${h(formatTitimangsa(stamp.place,stamp.date))}</div></div><div class="signature-columns"><div class="signature-person"><div>${supervisorLabel}</div><div>${v(p.supervisorPosition)}</div><div class="signature-space"></div><div class="signature-name">${v(p.supervisorName)}</div><div>NIP. ${v(p.supervisorNip)}</div></div><div class="signature-person"><div class="signature-heading-spacer" aria-hidden="true">&nbsp;</div><div>${v(sikapJabatanCetak())}</div><div class="signature-space"></div><div class="signature-name">${v(p.name)}</div><div>NIP. ${v(p.nip)}</div></div></div></div>`;
 }
-function sikapReportPrintCSS(){return "@page{size:A4 landscape;margin:12mm}\n@media print{\n .tablewrap{overflow:visible!important;border:0!important;border-radius:0!important}\n .report-table{width:100%;min-width:0!important;border-collapse:collapse}\n .report-table thead{display:table-header-group}\n .report-table thead th{text-align:center!important;vertical-align:middle!important}\n .report-table.sikap-lckb-table{table-layout:fixed;font:9pt Arial,sans-serif}\n .report-table.sikap-lckb-table th:nth-child(1),.report-table.sikap-lckb-table td:nth-child(1){width:5%}\n .report-table.sikap-lckb-table th:nth-child(2),.report-table.sikap-lckb-table td:nth-child(2){width:46%}\n .report-table.sikap-lckb-table th:nth-child(3),.report-table.sikap-lckb-table td:nth-child(3){width:16%;min-width:0;white-space:normal!important}\n .report-table.sikap-lckb-table th:nth-child(4),.report-table.sikap-lckb-table td:nth-child(4){width:33%}\n .report-table.sikap-lckb-table td{line-height:1.35;padding:5px 6px;overflow-wrap:anywhere}\n .report-table tr.lckb-service-row{break-inside:auto!important;page-break-inside:auto!important}\n .report-table .lckb-service-row li{break-inside:avoid;page-break-inside:avoid}\n .signature-area{break-inside:avoid;page-break-inside:avoid}\n}";}
-const sikapPrintStyle=document.createElement('style');sikapPrintStyle.id='sikap-shared-report-print';sikapPrintStyle.textContent=sikapReportPrintCSS();document.head.appendChild(sikapPrintStyle);
+function sikapReportPrintCSS(){
+ return `@media print{
+  .tablewrap{overflow:visible!important;border:0!important;border-radius:0!important}
+  .report-table{width:100%;min-width:0!important;border-collapse:collapse}
+  .report-table thead{display:table-header-group}
+  .report-table thead th{text-align:center!important;vertical-align:middle!important}
+  .report-table.sikap-lckb-table{table-layout:fixed;font:9pt Arial,sans-serif}
+  .report-table.sikap-lckb-table thead th:nth-child(1){width:5%}
+  .report-table.sikap-lckb-table thead th:nth-child(2){width:46%}
+  .report-table.sikap-lckb-table thead th:nth-child(3){width:16%;min-width:0;white-space:normal!important}
+  .report-table.sikap-lckb-table thead th:nth-child(4){width:33%}
+  .report-table.sikap-lckb-table .lckb-group,
+  .report-table.sikap-lckb-table .lckb-group th{break-after:avoid;page-break-after:avoid}
+  .report-table.sikap-lckb-table .lckb-group th{text-align:left!important;padding:4px 6px}
+  .report-table.sikap-lckb-table .lckb-activity-row{break-inside:avoid;page-break-inside:avoid}
+  .report-table.sikap-lckb-table .lckb-activity-row td{line-height:1.25;padding:3px 5px;min-width:0;vertical-align:top;overflow-wrap:anywhere;white-space:pre-line!important}
+  .report-table.sikap-lckb-table .lckb-activity-row td:first-child,
+  .report-table.sikap-lckb-table .lckb-activity-row td:nth-child(3){text-align:center}
+  .report-table .date-group{white-space:normal!important}
+  .signature-area{break-inside:avoid;page-break-inside:avoid}
+ }`;
+}
+const sikapPrintStyle=document.createElement('style');
+sikapPrintStyle.textContent=sikapReportPrintCSS()+reportPageCSS(reportOrientation);
+document.head.appendChild(sikapPrintStyle);
 function printReport(){
  const p=db.profile||{};
  const required=[['Nama pegawai',p.name],['NIP pegawai',p.nip],['Jabatan pegawai',sikapJabatanCetak()==='Belum diisi'?'':sikapJabatanCetak()],['Nama atasan',p.supervisorName],['NIP atasan',p.supervisorNip],['Jabatan atasan',p.supervisorPosition]];
